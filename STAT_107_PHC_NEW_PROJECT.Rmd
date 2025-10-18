@@ -1,0 +1,89 @@
+---
+title: 'STAT 107 Project:PHC'
+author: "Marianne, Donnie, Uriel"
+date: '2025-10-14'
+output:
+  pdf_document: default
+  html_document: default
+---
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+##Main data set idea
+ 
+```{r}
+
+DDAY_1 <- read.csv("DDAY.csv")
+head(DDAY_1)
+summary(DDAY_1)
+table(DDAY_1)
+
+
+```
+##Supporting data sets
+
+
+```{r}
+
+Pov_1 <- read.csv("Pov.csv")
+head(Pov_1)
+summary(Pov_1)
+
+
+```
+```{r}
+API_1 <- read.csv("API_A.csv")
+head(API_1)
+
+API_2 <- read.csv("API_B.csv")
+head(API_2)
+
+API_3 <- read.csv("API_C.csv")
+head(API_3)
+```
+```{r}
+Grow_1 <- read.csv("Grow.csv")
+head(Grow_1)
+summary(Grow_1)
+```
+
+
+
+## Basic Data Frame Descriptions
+
+
+First questions!
+
+1. How many observations: `nrow()` function.
+2. How many variables: `ncol()` function.
+3. Dimensions of data frame: `dim()` function.
+
+```{r}
+
+nrow(DDAY_1) # No. of observations.
+ncol(DDAY_1) # No. of variables of interest.
+dim(DDAY_1)  # both.
+
+```
+
+
+4. Names attached to each variable: `colnames()` function.
+
+```{r}
+
+colnames(DDAY_1)
+
+```
+
+
+5. Looking at the first 5 rows: `head()` function.
+
+```{r}
+
+head(DDAY_1)
+
+```
+
