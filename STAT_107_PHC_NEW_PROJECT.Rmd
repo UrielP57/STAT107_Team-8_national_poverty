@@ -8,7 +8,18 @@ output:
   pdf_document: default
   html_document: default
 ---
+##Introduction (work in progress)
+#Purpose:
+To created and train a model to not only establish a connection between the Poverty headcount ratio and Inflation. But potential create a means to see trends that will eventually help foresee potential spikes of inflation worldwide. (work in process)
 
+#Question
+The question we are attempting to answer is whether or not there is a statistically significant correlation between inflation rates and the Poverty headcount ratio across countries worldwide?
+
+#Benefit:
+This analysis should be able to benefit government institutions such Federal Reserves and IRS (Internal revenue Service) of the US but many more countries. (Add more)
+
+#Plan:
+We hope to answer our hypothesis since, if we are able to establish a connection between inflation to PHC. Then going forward it would be possible to train a model that could potential forecast the trends of inflation which would help government bodies worldwide create plans to counteract these shifts. 
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
@@ -26,25 +37,12 @@ table(DDAY_1)
 
 ```
 ##Supporting data sets
-
-
-```{r}
-
-Pov_1 <- read.csv("Pov.csv")
-head(Pov_1)
-summary(Pov_1)
-
-
-```
 ```{r}
 API_1 <- read.csv("API_A.csv")
 head(API_1)
 
 API_2 <- read.csv("API_B.csv")
 head(API_2)
-
-API_3 <- read.csv("API_C.csv")
-head(API_3)
 ```
 ```{r}
 Grow_1 <- read.csv("Grow.csv")
