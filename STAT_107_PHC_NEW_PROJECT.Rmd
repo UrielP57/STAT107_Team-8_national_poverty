@@ -1,3 +1,5 @@
+##Question: Is there a statistically significant correlation between inflation rates and the Poverty headcount ratio across countries worldwide?
+
 ---
 title: 'STAT 107 Project:PHC'
 author: "Marianne, Donnie, Uriel"
