@@ -36,16 +36,13 @@ ND <- read.csv("New_DDAY.csv")
 ```
 
 ```{r}
-col_ND <- ND[,1][5:270]
-#code above gets all the column names into a vector
-
 row_ND <- c()
 not_imp <- c()
 for (ind_row in 1:nrow(ND)){
   ND[is.na(ND)] <- 0
   for (i in ND[ind_row,]){
     RC <- as.character(i)
-    if (RC == 0){
+    if (RC == "0"){
       row_ND <- c(row_ND, RC)
         
       } else {
@@ -62,23 +59,26 @@ for (ind_row in 1:nrow(ND)){
 }
 ```
 
-###Explanation for why I'm doing this
-since I used the loops to get all the rows into a singular vector, and after running length(row_ND) I know it is 17550 spaces long. So there are 270 rows for every data set, and we want them to be separate by 65 each. Because each space will have an associated batch of numbers so it would match up right with the years (1960-2025). 
-Please use this explanation for the remainder two data sets.
+# Get groups of 270 and each group has a length of 65. Then use split() to apply that row_ND
 ```{r}
-x <- row_ND
+a <- row_ND
 ND_by_65 <- rep(1:270, each = 65)
-fin_ND <- split(x, ND_by_65)
-fin_ND[4]
-fin_ND[270]
+fin_ND <- split(a, ND_by_65)
 
 ```
 
 
-#Making the data frame
+## Data Frame for ND with rows and columns switched:
 ```{r}
 
+col_nm <- ND[,1][5:270]
+df_ND <- data.frame(col_nm = fin_ND[5:270])
+
+colnames(df_ND) <- c(col_nm)
+years <- c(1960:2024)
+rownames(df_ND) <- c(years)
 ```
+
 
 
 
@@ -98,7 +98,7 @@ for (ind_API in 1:nrow(API)){
   API[is.na(API)] <- 0
   for (i in API[ind_API,]){
     RC_2 <- as.character(i)
-    if (RC_2 == 0){
+    if (RC_2 == "0"){
       row_API <- c(row_API, RC_2)
         
         } else {
@@ -117,12 +117,18 @@ for (ind_API in 1:nrow(API)){
 
 
 ```{r}
-x <- row_API
+b <- row_API
 API_by_65 <- rep(1:270, each = 65)
-fin_API <- split(x, API_by_65)
-fin_API[4]
-fin_API[270]
-#works
+fin_API <- split(b, API_by_65)
+```
+
+##Data Frame for API with rows and columns switched:
+```{r}
+col_nm_2 <- API[,1][5:270]
+df_API <- data.frame(col_nm = fin_API[5:270])
+
+colnames(df_API) <- c(col_nm_2)
+rownames(df_API) <- c(years)
 ```
 
 
@@ -155,12 +161,18 @@ for (ind_PG in 1:nrow(Pop_Growth)){
 ```
 
 ```{r}
-x <- row_PG
+c <- row_PG
 PG_by_65 <- rep(1:270, each = 65)
-fin_PG <- split(x, PG_by_65)
-fin_PG[4]
-fin_PG[270]
-#works
+fin_PG <- split(c, PG_by_65)
+```
+
+##Data Frame for Pop_Growth with rows and columns switched:
+```{r}
+col_nm_3 <- Pop_Growth[,1][5:270]
+df_PG <- data.frame(col_nm = fin_PG[5:270])
+
+colnames(df_PG) <- c(col_nm_3)
+rownames(df_PG) <- c(years)
 ```
 
 
@@ -175,9 +187,9 @@ First questions!
 
 ```{r}
 
-nrow(ND) # No. of observations.
-ncol(ND) # No. of variables of interest.
-dim(ND)  # both.
+nrow(df_ND) # No. of observations.
+ncol(df_ND) # No. of variables of interest.
+dim(df_ND)  # both.
 
 ```
 
@@ -186,8 +198,8 @@ dim(ND)  # both.
 
 ```{r}
 # if we want column names, we have to find their columns
-ND[4,5:66]
-ND[2,1]
+ND_col <- colnames(df_ND)
+ND_row <- rownames(df_ND)
 
 ```
 
@@ -196,7 +208,7 @@ ND[2,1]
 
 ```{r}
 
-head(ND)
+head(df_ND)
 
 ```
 
