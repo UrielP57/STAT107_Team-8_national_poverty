@@ -92,6 +92,7 @@ SN_API <- read.csv("API_B.csv")
 
 
 ```{r}
+row_API <- c()
 not_imp_2 <- c()
 for (ind_API in 1:nrow(API)){
   API[is.na(API)] <- 0
@@ -130,6 +131,7 @@ Pop_Growth <- read.csv("Pop_Growth.csv")
 ```
 
 ```{r}
+row_PG <- c()
 NI <- c()
 for (ind_PG in 1:nrow(Pop_Growth)){
   Pop_Growth[is.na(Pop_Growth)] <- 0
