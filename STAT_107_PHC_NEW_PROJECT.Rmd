@@ -31,28 +31,135 @@ The data that is available is DDAY (Poverty Head Count at $3.00 a day (2021 PPP)
 ```{r}
 
 ND <- read.csv("New_DDAY.csv")
-head(ND, n =10)
-summary(ND)
+## Since none of the actual function for r would work with any of the data sets since all of them end up using the column values.
+#swap columns -> rows by making a new data frame
+```
 
+```{r}
+col_ND <- ND[,1][5:270]
+#code above gets all the column names into a vector
+
+row_ND <- c()
+not_imp <- c()
+for (ind_row in 1:nrow(ND)){
+  ND[is.na(ND)] <- 0
+  for (i in ND[ind_row,]){
+    RC <- as.character(i)
+    if (RC == 0){
+      row_ND <- c(row_ND, RC)
+        
+      } else {
+        vari_RC <- suppressWarnings(as.numeric(RC))
+                                    
+                                    
+      if (!is.na(vari_RC)){
+        row_ND <- c(row_ND, RC)
+        }  else if (RC != ""){
+        not_imp <- c(not_imp, RC)
+        }
+    }
+  }
+}
+```
+
+###Explanation for why I'm doing this
+since I used the loops to get all the rows into a singular vector, and after running length(row_ND) I know it is 17550 spaces long. So there are 270 rows for every data set, and we want them to be separate by 65 each. Because each space will have an associated batch of numbers so it would match up right with the years (1960-2025). 
+Please use this explanation for the remainder two data sets.
+```{r}
+x <- row_ND
+ND_by_65 <- rep(1:270, each = 65)
+fin_ND <- split(x, ND_by_65)
+fin_ND[4]
+fin_ND[270]
 
 ```
+
+
+#Making the data frame
+```{r}
+
+```
+
+
+
+
 ##Supporting data sets
 ```{r}
 API <- read.csv("API_A.csv")
-print(API[5,])
-#using the summary() function gives a output, but since the table itself uses rows as columns and vice-versa. The outputs are mathematically incorrect
-summary(API[5,])
-# This SN_API is just notes left behind by the people who actually made the data set, they might prove to be useful later on when it comes to explaining the data.
 SN_API <- read.csv("API_B.csv")
-head(SN_API)
-```
-```{r}
-Pop_Growth <- read.csv("Pop_Growth.csv")
-head(Pop_Growth)
-#look at previous chunk for explanation
-summary(Pop_Growth)
+#This just has notes left behind by the orginal makers of this dataset
 ```
 
+
+```{r}
+not_imp_2 <- c()
+for (ind_API in 1:nrow(API)){
+  API[is.na(API)] <- 0
+  for (i in API[ind_API,]){
+    RC_2 <- as.character(i)
+    if (RC_2 == 0){
+      row_API <- c(row_API, RC_2)
+        
+        } else {
+        vari_RC_2 <- suppressWarnings(as.numeric(RC_2))
+                                    
+                                    
+        if (!is.na(vari_RC_2)){
+          row_API <- c(row_API, RC_2)
+          } else if (RC_2 != ""){
+          not_imp_2 <- c(not_imp_2, RC_2)
+        }
+    }
+  }
+}
+```
+
+
+```{r}
+x <- row_API
+API_by_65 <- rep(1:270, each = 65)
+fin_API <- split(x, API_by_65)
+fin_API[4]
+fin_API[270]
+#works
+```
+
+
+```{r}
+Pop_Growth <- read.csv("Pop_Growth.csv")
+```
+
+```{r}
+NI <- c()
+for (ind_PG in 1:nrow(Pop_Growth)){
+  Pop_Growth[is.na(Pop_Growth)] <- 0
+  for (i in Pop_Growth[ind_PG,]){
+    RC_3 <- as.character(i)
+    if (RC_3 == "0"){
+      row_PG <- c(row_PG, RC_3)
+        
+      } else {
+      vari_RC_3 <- suppressWarnings(as.numeric(RC_3))
+                                    
+                                    
+      if (!is.na(vari_RC_3)){
+        row_PG <- c(row_PG, RC_3)
+      } else if (RC_3 != ""){
+        NI <- c(NI, RC_3)
+        }
+    }
+  }
+}
+```
+
+```{r}
+x <- row_PG
+PG_by_65 <- rep(1:270, each = 65)
+fin_PG <- split(x, PG_by_65)
+fin_PG[4]
+fin_PG[270]
+#works
+```
 
 
 ## Basic Data Frame Descriptions
@@ -77,7 +184,8 @@ dim(ND)  # both.
 
 ```{r}
 # if we want column names, we have to find their columns
-ND[1]
+ND[4,5:66]
+ND[2,1]
 
 ```
 
