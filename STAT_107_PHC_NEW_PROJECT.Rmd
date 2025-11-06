@@ -27,26 +27,17 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ##Data 
 The data that is available is NEW_DDAY (Poverty Head Count at $3.00 a day (2021 PPP)), API_1 and API_2 are from the same data set (Inflation consumer prices (annual %) for the World, Grow (Population growth (annual%)). However API_2 is less about data and more of the information it can present since it contains notes left behind from the makers of the csv file. 
-#Variables and number of observations:
-
-1. How many observations: `nrow()` function.
-2. How many variables: `ncol()` function.
-3. Dimensions of data frame: `dim()` function.
-
+##Data sets:
 ```{r}
-print("All three Data Sets have the same rows, columns and dimensions")
-nrow(df_ND) # No. of observations.
-ncol(df_ND) # No. of variables of interest.
-dim(df_ND)  # both.
-
+ND <- read.csv("New_DDAY.csv")
+API <- read.csv("API_A.csv")
+SN_API <- read.csv("API_B.csv")
+Pop_Growth <- read.csv("Pop_Growth.csv")
 ```
 
 ##Cleaning the Data:
 For each of the three data sets, it was needed to recreate a data frame since the original csv file showed each excel file to have their rows and columns in the wrong place. Since basic R function like summary() or mean() would grab information from the file's columns, it would output an answer. However the number results would be wrong since it would be grabbing all 270 countries info for 1960. So after swapping the column and rows into the new data frame, (idk where this is going)
 #Code for New_DDAY
-```{r}
-ND <- read.csv("New_DDAY.csv")
-```
 
 ```{r}
 #Item names: row_ND, not_imp, ind_row, RC, row_ND,vari_RC.
@@ -93,13 +84,7 @@ years <- c(1960:2024)
 rownames(df_ND) <- c(years)
 ```
 
-##Supporting data sets
-```{r}
-API <- read.csv("API_A.csv")
-SN_API <- read.csv("API_B.csv")
-#This just has notes left behind by the original makers of this csv file.
-```
-
+##Supporting data sets: API and Pop_Growth
 
 ```{r}
 #Item names: row_API, not_imp_2, ind_API, RC_2,vari_RC_2.
@@ -152,10 +137,8 @@ while ( i < 267 ){
 ```
 
 
-```{r}
-Pop_Growth <- read.csv("Pop_Growth.csv")
-```
 
+##Pop_Growth
 ```{r}
 #Item names: row_PG, NI, ind_PG, RC_3,vari_RC_3.
 row_PG <- c()
@@ -198,10 +181,23 @@ colnames(df_PG) <- c(col_nm_3)
 rownames(df_PG) <- c(years)
 
 
+
+```
+#Variables and number of observations:
+
+1. How many observations: `nrow()` function.
+2. How many variables: `ncol()` function.
+3. Dimensions of data frame: `dim()` function.
+
+```{r}
+print("All three Data Sets have the same rows, columns and dimensions")
+nrow(df_ND) # No. of observations.
+ncol(df_ND) # No. of variables of interest.
+dim(df_ND)  # both.
 ```
 
 #Will the data be generated through a randomized simulation?
-It is possible since it would depend on whether or not if we will attempt to forecast the the upcoming years to better see a possible trend (need team input)
+It is possible since it would depend on whether or not if we will attempt to forecast the the upcoming years to better see a possible trend (need team input). 
 
 ##Visualization:
 ```{r}
@@ -213,10 +209,56 @@ while ( i < 267 ){
   sum_PG <- summary(as.double(df_PG[,i]))
   i = i + 1
   
+
 }
+
 #Used a while loop since it was better option.
 #Next steps: Visualization: Provide preliminary visualization in the form of histograms, density plots, scatter plots, boxplots, and numerical summaries of the data, depending on the type of analysis. What do these visualizations suggest about the hypothesis, model or simulation you are aiming to perform?
 
 ```
 
+#Preliminary visualization:
+
+```{r}
+#Histogram and plot are horrible visualization for the data for ND
+# While for API, it has way to many zeros so each of plots for a scatter and histo will end up screwing the data
+# For PG, it would be good for which ever the one. However, since its horrible for the 2 other data sets so it might be better to run a linear regression anaylsis. 
+
+```
+
+```{r}
+library("ggplot2")
+library("stargazer")
+#If we want a linear regression to run, we must keep each df_ND$ as a double type since as a character an output occurs but it looks messy for summary()
+
+A1 <- lm(as.double(df_ND$Angola) ~ as.double(df_ND$Albania), data = df_ND)
+
+B1 <- lm(as.double(df_ND$France) ~ as.double(df_ND$Dominica), data = df_ND)
+
+C1 <- lm(as.double(df_ND$Australia) ~ as.double(df_ND$Austria), data = df_ND)
+
+D1 <- lm(as.double(df_ND$`Viet Nam`) ~ as.double(df_ND$Vanuatu), data = df_ND)
+
+E1 <- lm(as.double(df_ND$Spain) ~ as.double(df_ND$Estonia), data = df_ND)
+```
+
+```{r}
+#four is the max amount of lm() we can have per stargazer(), because 5 gets crowded.I'm confuse on why its outputting Warning......
+stargazer(A1,B1,C1,D1,
+            header=FALSE,
+            font.size = "tiny",
+            type = "text",
+            algin = TRUE,
+            single = FALSE,
+            column.sep.width = "1pt",
+            digits =2)
+stargazer(E1,
+            header=FALSE,
+            font.size = "tiny",
+            type = "text",
+            algin = TRUE,
+            single = FALSE,
+            column.sep.width = "1pt",
+            digits =2)
+```
 
