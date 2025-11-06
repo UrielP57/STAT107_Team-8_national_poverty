@@ -10,13 +10,13 @@ output:
 ---
 ##Introduction (work in progress)
 #Purpose:
-To created and train a model to not only establish a connection between the Poverty headcount ratio and Inflation. But potential create a means to see trends that will eventually help foresee potential spikes of inflation worldwide. (work in process)
+To created and train a model to not only establish a connection between the Poverty headcount ratio and Inflation. But potential create a means to see trends that will eventually help foresee potential spikes of inflation worldwide.
 
 #Question
 The question we are attempting to answer is whether or not there is a statistically significant correlation between inflation rates and the Poverty headcount ratio across countries worldwide?
 
 #Benefit:
-This analysis should be able to benefit government institutions such Federal Reserves and IRS (Internal revenue Service) of the US but many more countries. (Add more)
+This analysis should be to benefit government institutions that not only track but try to influence how much inflation would inflict upon society as a whole. This would implicate federal policies that end up being passed or killed in the senate. Which in turn would affect local business all the way to international ones. 
 
 #Plan:
 We hope to answer our hypothesis since, if we are able to establish a connection between inflation to PHC. Then going forward it would be possible to train a model that could potential forecast the trends of inflation which would help government bodies worldwide create plans to counteract these shifts. 
@@ -25,9 +25,25 @@ We hope to answer our hypothesis since, if we are able to establish a connection
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-##Main data set idea
-The data that is available is DDAY (Poverty Head Count at $3.00 a day (2021 PPP)), API_1 and API_2 are from the same data set (Inflation consumer prices (annual %) for the World), Grow (Population growth (annual%)).
- 
+##Data 
+The data that is available is NEW_DDAY (Poverty Head Count at $3.00 a day (2021 PPP)), API_1 and API_2 are from the same data set (Inflation consumer prices (annual %) for the World, Grow (Population growth (annual%)). However API_2 is less about data and more of the information it can present since it contains notes left behind from the makers of the csv file. 
+#Variables and number of observations:
+
+1. How many observations: `nrow()` function.
+2. How many variables: `ncol()` function.
+3. Dimensions of data frame: `dim()` function.
+
+```{r}
+print("All three Data Sets have the same rows, columns and dimensions")
+nrow(df_ND) # No. of observations.
+ncol(df_ND) # No. of variables of interest.
+dim(df_ND)  # both.
+
+```
+
+##Cleaning the Data:
+For each of the three data sets, it was needed to recreate a data frame since the original csv file showed each excel file to have their rows and columns in the wrong place. Since basic R function like summary() or mean() would grab information from the file's columns, it would output an answer. However the number results would be wrong since it would be grabbing all 270 countries info for 1960. So after swapping the column and rows into the new data frame, (idk where this is going)
+#Code for New_DDAY
 ```{r}
 ND <- read.csv("New_DDAY.csv")
 ```
@@ -76,25 +92,6 @@ colnames(df_ND) <- c(col_nm)
 years <- c(1960:2024) 
 rownames(df_ND) <- c(years)
 ```
-
-##Basic R functions:
-```{r}
-##df_ND[,266] is the last country (Zimbabwe). Because I set fin_ND[5:270], so we can skip the first 3 rows of zeros and country years
-i = 1
-while ( i < 267 ){
-  #print(i)
-  #print(summary(as.double(df_ND[,i])))
-  #have a pound sign so not to clogged the file
-  i = i + 1
-  
-}
-#Used a while loop since it was better option.
-
-```
-
-
-
-
 
 ##Supporting data sets
 ```{r}
@@ -200,50 +197,26 @@ df_PG <- data.frame(col_nm = fin_PG[5:270])
 colnames(df_PG) <- c(col_nm_3)
 rownames(df_PG) <- c(years)
 
+
+```
+
+#Will the data be generated through a randomized simulation?
+It is possible since it would depend on whether or not if we will attempt to forecast the the upcoming years to better see a possible trend (need team input)
+
+##Visualization:
+```{r}
+##df_ND[,266] is the last country (Zimbabwe). Because I set fin_ND[5:270], so we can skip the first 3 rows of zeros and country years
 i = 1
 while ( i < 267 ){
-  #(i)
-  #print((summary(as.double(df_PG[,i]))))
-  #have a pound sign so not to clogged the file
+  sum_ND <- summary(as.double(df_ND[,i]))
+  sum_API <- summary(as.double(df_API[,i]))
+  sum_PG <- summary(as.double(df_PG[,i]))
   i = i + 1
   
 }
-```
-
-
-## Basic Data Frame Descriptions
-
-
-First questions!
-
-1. How many observations: `nrow()` function.
-2. How many variables: `ncol()` function.
-3. Dimensions of data frame: `dim()` function.
-
-```{r}
-
-nrow(df_ND) # No. of observations.
-ncol(df_ND) # No. of variables of interest.
-dim(df_ND)  # both.
+#Used a while loop since it was better option.
+#Next steps: Visualization: Provide preliminary visualization in the form of histograms, density plots, scatter plots, boxplots, and numerical summaries of the data, depending on the type of analysis. What do these visualizations suggest about the hypothesis, model or simulation you are aiming to perform?
 
 ```
 
-
-4. Names attached to each variable: `colnames()` function.
-
-```{r}
-# if we want column names, we have to find their columns
-ND_col <- colnames(df_ND)
-ND_row <- rownames(df_ND)
-
-```
-
-
-5. Looking at the first 5 rows: `head()` function.
-
-```{r}
-
-head(df_ND)
-
-```
 
