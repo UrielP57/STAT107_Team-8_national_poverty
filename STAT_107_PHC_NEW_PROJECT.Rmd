@@ -1,5 +1,3 @@
-##Question: Is there a statistically significant correlation between inflation rates and the Poverty headcount ratio across countries worldwide?
-
 ---
 title: 'STAT 107 Project:PHC'
 author: "Marianne, Donnie, Uriel"
@@ -8,35 +6,42 @@ output:
   pdf_document: default
   html_document: default
 ---
-##Introduction (work in progress)
-#Purpose:
-To created and train a model to not only establish a connection between the Poverty headcount ratio and Inflation. But potential create a means to see trends that will eventually help foresee potential spikes of inflation worldwide.
+##Introduction
+Contributions:
+Donnie: Created and finished a RMD file, helped with smoothing out the structure of all the writing, helped created the sub-question, and brain stormed ideas for analysis.
 
+Marianne: finished up visualization section, helped eliminating non-essential data sets, added/did 00.requirement.R, and introduced Population growth as a potential factor.
+
+Uriel: Work mainly on the code itself, helped set up the main structure of 'STAT 107 Project:PHC', find the majority of the data set and original question, and communicated the most.
+#Purpose:
+The purpose of this experiment was to create and train a model to not only establish a connection with the Poverty headcount ratio between the Inflation and Population Growth. But potential create a means to see trends that will eventually help foresee potential spikes worldwide. This analysis should be to benefit government institutions that not only track but try to influence how much inflation would inflict upon society as a whole. Moreover to see as if the world's population continues to rise, the poverty line would be swayed by it. This would implicate federal policies that end up being passed or being killed in the senate. Which in turn would affect local business all the way to international ones and even affect industries on multiple levels.
 #Question
-The question we are attempting to answer is whether or not there is a statistically significant correlation between inflation rates and the Poverty headcount ratio across countries worldwide?
+-Main Question: Is there a statistically significant correlation between inflation rate and the Poverty headcount ratio across countries worldwide? 
+-Sub-Question: Which of the two effects; inflation rate or population growth, have a bigger influenced when it comes to affecting the Poverty headcount ratio?
 
 #Benefit:
 This analysis should be to benefit government institutions that not only track but try to influence how much inflation would inflict upon society as a whole. This would implicate federal policies that end up being passed or killed in the senate. Which in turn would affect local business all the way to international ones. 
 
 #Plan:
-We hope to answer our hypothesis since, if we are able to establish a connection between inflation to PHC. Then going forward it would be possible to train a model that could potential forecast the trends of inflation which would help government bodies worldwide create plans to counteract these shifts. 
+We hope to answer our question since, if we are able to establish a connection between inflation to PHC. Then going forward it would be possible to train a model that could potential forecast the trends of inflation which would help government bodies worldwide create plans to counteract these shifts. However for the sub question, it is more of means of determining which of the two effects have a bigger influence if they do.
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
 ##Data 
-The data that is available is NEW_DDAY (Poverty Head Count at $3.00 a day (2021 PPP)), API_1 and API_2 are from the same data set (Inflation consumer prices (annual %) for the World, Grow (Population growth (annual%)). However API_2 is less about data and more of the information it can present since it contains notes left behind from the makers of the csv file. 
+The data that is available is NEW_DDAY and NEW_DDAY dos are from the same set (Poverty Head Count at $3.00 a day (2021 PPP)), API_1 and API_2 are from the same data set (Inflation consumer prices (annual %) for the World, Grow (Population growth (annual%)). However API_2 and NEW_DDAY dos is less about data and its importance is more of the information it can present since it contains notes left behind from the makers of the csv file. That would explain why certain values appeared.
 ##Data sets:
 ```{r}
 ND <- read.csv("New_DDAY.csv")
+ND2 <- read.csv("NEW_DDAY_dos.csv")
 API <- read.csv("API_A.csv")
 SN_API <- read.csv("API_B.csv")
 Pop_Growth <- read.csv("Pop_Growth.csv")
 ```
 
 ##Cleaning the Data:
-For each of the three data sets, it was needed to recreate a data frame since the original csv file showed each excel file to have their rows and columns in the wrong place. Since basic R function like summary() or mean() would grab information from the file's columns, it would output an answer. However the number results would be wrong since it would be grabbing all 270 countries info for 1960. So after swapping the column and rows into the new data frame, (idk where this is going)
+For each of the three data sets, it was needed to recreate a data frame since the original csv file showed each excel file to have their rows and columns in the wrong place. Since basic R function like summary() or mean() would grab information from the file's columns, it would output an answer. However the number result would be wrong since it would be grabbing all 270 countries info for 1960. So df_ND,API,PG are just data frames with all the numeric information of the orginal csv file. So it looks more visually more appealing and so it be a ton easier to use any built in graphing function that will not produce the wrong result.
 #Code for New_DDAY
 
 ```{r}
@@ -64,7 +69,7 @@ for (ind_row in rownames(ND)){
 }
 ```
 
-# Get groups of 270 and each group has a length of 65. Then use split() to apply that row_ND
+# find_ND: Get groups of 270 and each group has a length of 65. Then use split() to apply that row_ND
 ```{r}
 a <- row_ND
 ND_by_65 <- rep(1:270, each = 65)
@@ -111,7 +116,7 @@ for (ind_API in rownames(API)){
 }
 ```
 
-
+#Look at main data set grouping section for explanation
 ```{r}
 b <- row_API
 API_by_65 <- rep(1:270, each = 65)
@@ -125,15 +130,6 @@ df_API <- data.frame(col_nm = fin_API[5:270])
 
 colnames(df_API) <- c(col_nm_2)
 rownames(df_API) <- c(years)
-
-i = 1
-while ( i < 267 ){
-  #(i)
-  #print((summary(as.double(df_API[,i]))))
-  #have a pound sign so not to clogged the file
-  i = i + 1
-  
-}
 ```
 
 
@@ -197,7 +193,7 @@ dim(df_ND)  # both.
 ```
 
 #Will the data be generated through a randomized simulation?
-It is possible since it would depend on whether or not if we will attempt to forecast the the upcoming years to better see a possible trend (need team input). 
+In our case no, unless forecast counts as randomzied simulations. 
 
 ##Visualization:
 ```{r}
@@ -212,28 +208,16 @@ while ( i < 267 ){
 
 }
 
-#Used a while loop since it was better option.
-#Next steps: Visualization: Provide preliminary visualization in the form of histograms, density plots, scatter plots, boxplots, and numerical summaries of the data, depending on the type of analysis. What do these visualizations suggest about the hypothesis, model or simulation you are aiming to perform?
-
 ```
 
 #Preliminary visualization:
-
-```{r}
-#Histogram and plot are horrible visualization for the data for ND
-# While for API, it has way to many zeros so each of plots for a scatter and histo will end up screwing the data
-# For PG, it would be good for which ever the one. However, since its horrible for the 2 other data sets so it might be better to run a linear regression anaylsis. 
-
-```
-
 ```{r}
 library("ggplot2")
 library("stargazer")
-#If we want a linear regression to run, we must keep each df_ND$ as a double type since as a character an output occurs but it looks messy for summary()
+#If we want a linear regression to run, we must keep each df_ND$ as a double type.
+A1 <- lm(as.double(df_API$Australia) ~ as.double(df_API$Austria), data = df_API)
 
-A1 <- lm(as.double(df_ND$Angola) ~ as.double(df_ND$Albania), data = df_ND)
-
-B1 <- lm(as.double(df_ND$France) ~ as.double(df_ND$Dominica), data = df_ND)
+B1 <- lm(as.double(df_API$`Viet Nam`) ~ as.double(df_API$Vanuatu), data = df_API)
 
 C1 <- lm(as.double(df_ND$Australia) ~ as.double(df_ND$Austria), data = df_ND)
 
@@ -243,7 +227,7 @@ E1 <- lm(as.double(df_ND$Spain) ~ as.double(df_ND$Estonia), data = df_ND)
 ```
 
 ```{r}
-#four is the max amount of lm() we can have per stargazer(), because 5 gets crowded.I'm confuse on why its outputting Warning......
+#four is the max amount of lm() we can have per stargazer(), because 5 becomes a crowded.
 stargazer(A1,B1,C1,D1,
             header=FALSE,
             font.size = "tiny",
