@@ -231,9 +231,9 @@ library("ggplot2")
 library("stargazer")
 #If we want a linear regression to run, we must keep each df_ND$ as a double type since as a character an output occurs but it looks messy for summary()
 
-A1 <- lm(as.double(df_ND$Angola) ~ as.double(df_ND$Albania), data = df_ND)
+A1 <- lm(as.double(df_API$Australia) ~ as.double(df_API$Austria), data = df_API)
 
-B1 <- lm(as.double(df_ND$France) ~ as.double(df_ND$Dominica), data = df_ND)
+B1 <- lm(as.double(df_API$`Viet Nam`) ~ as.double(df_API$Vanuatu), data = df_API)
 
 C1 <- lm(as.double(df_ND$Australia) ~ as.double(df_ND$Austria), data = df_ND)
 
