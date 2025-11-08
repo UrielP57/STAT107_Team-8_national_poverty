@@ -215,6 +215,7 @@ while ( i < 267 ){
 library("ggplot2")
 library("stargazer")
 #If we want a linear regression to run, we must keep each df_ND$ as a double type.
+
 A1 <- lm(as.double(df_API$Australia) ~ as.double(df_API$Austria), data = df_API)
 
 B1 <- lm(as.double(df_API$`Viet Nam`) ~ as.double(df_API$Vanuatu), data = df_API)
