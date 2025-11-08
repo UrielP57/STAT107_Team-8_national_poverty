@@ -3,8 +3,8 @@ title: 'STAT 107 Project:PHC'
 author: "Marianne, Donnie, Uriel"
 date: '2025-10-14'
 output:
-  html_document: default
   pdf_document: default
+  html_document: default
 ---
 ### Introduction
 Contributions:
@@ -211,6 +211,7 @@ while ( i < 267 ){
 ```
 
 # Preliminary visualization:
+We will be using linear regression, since it would not only help to answer our question. It would however make it easier to properly present our findings for the analysis section. Additionally the plan for this section is to compile the data into a linear regression so we are able to compare inflation to the Poverty head count for each 270 countries. Then we will code a way to compile all the results into four main groups, one for no signifcances and the other three will be based on p-value groups that the linear regression provides.
 ```{r}
 library("ggplot2")
 library("stargazer")
@@ -247,7 +248,7 @@ stargazer(E1,
             digits =2)
 ```
 # Analysis:
-
+Then we will use the group that passes the lowest p-values as our defined findings. This is where the previous two data sets of API_2, and NEW_DDAY dos will come in handing in terms of trying to explain what reason cause us to see the results that we end up finding. And additional see if forecasting the results is even possible.
 ```{r}
 # associated relocation of p-values of each linear regression for each country would be placed here.
 ```
