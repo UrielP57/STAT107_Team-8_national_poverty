@@ -7,51 +7,52 @@ output:
   html_document: default
 ---
 ### Introduction
-Contributions:
-Donnie: Created and finished a RMD file, helped with smoothing out the structure of all the writing, helped created the sub-question, and brain stormed ideas for analysis.
-
-Marianne: finished up visualization section, helped eliminating non-essential data sets, added/did 00.requirement.R, and introduced Population growth as a potential factor.
-
-Uriel: Work mainly on the code itself, helped set up the main structure of 'STAT 107 Project:PHC', find the majority of the data set and original question, and communicated the most.
 # Purpose:
-The purpose of this experiment was to create and train a model to not only establish a connection with the Poverty headcount ratio between the Inflation and Population Growth. But potential create a means to see trends that will eventually help foresee potential spikes worldwide. This analysis should be to benefit government institutions that not only track but try to influence how much inflation would inflict upon society as a whole. Moreover to see as if the world's population continues to rise, the poverty line would be swayed by it. This would implicate federal policies that end up being passed or being killed in the senate. Which in turn would affect local business all the way to international ones and even affect industries on multiple levels.
-# Question
--Main Question: Is there a statistically significant correlation between inflation rate and the Poverty headcount ratio across countries worldwide? 
--Sub-Question: Which of the two effects; inflation rate or population growth, have a bigger influenced when it comes to affecting the Poverty headcount ratio?
+The purpose of this experiment is to figure out if the choose independent variables not only prove that to influence the Poverty Headcount ratio. But to potentially figure out if by building a linear regression (either with transformation or alternative one) can help fores the next decades world wide poverty rate. The result of this research can help organization as United Nations to create a movement to either compile member nations to invest more of their GDP into education and improving their individual economies. And whatever policies they move will affect businesses on all levels and those on a consumer level. 
 
+# Question
+-Main Question: Is the choose variables of average of; Education% per GDP, Unemployment, Population growth, Inflation able to influence the Poverty rate of the world?
+
+-Sub-Question: Is it possible to forecast the Poverty headcount ratio for the foreseeable future. 
+ 
 # Benefit:
-This analysis should be to benefit government institutions that not only track but try to influence how much inflation would inflict upon society as a whole. This would implicate federal policies that end up being passed or killed in the senate. Which in turn would affect local business all the way to international ones. 
+This analysis should be to benefit government institutions that not only track but try to influence how much inflation would inflict upon society as a whole. Additionally knowing whether not a country like United Kingdom can reduce their nation's Poverty rate if unemployment is deemed the most influencing variable. The same applies for population growth however that is less controllable while being confined to moral reasons. 
 
 # Plan:
-We hope to answer our question since, if we are able to establish a connection between inflation to PHC. Then going forward it would be possible to train a model that could potential forecast the trends of inflation which would help government bodies worldwide create plans to counteract these shifts. However for the sub question, it is more of means of determining which of the two effects have a bigger influence if they do.
+We hope to answer our question since, if it is determined that the independent variables have a significant ability to influence the Poverty head count ratio. Then going forward it would be possible to train a model that could potential forecast which would help government bodies worldwide create plans to counteract these shifts.
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
 ## Data 
-The data that is available is NEW_DDAY and NEW_DDAY dos are from the same set (Poverty Head Count at $3.00 a day (2021 PPP)), API_1 and API_2 are from the same data set (Inflation consumer prices (annual %) for the World, Grow (Population growth (annual%)). However API_2 and NEW_DDAY dos is less about data and its importance is more of the information it can present since it contains notes left behind from the makers of the csv file. That would explain why certain values appeared.
+There are currently five different data sets, all of which are from World Bank Group database. The dependent variable is currently referencing to Poverty Headcount ratio or Poverty rate for short($3.00 a day) being names as ND. The independent variables are about annual Population growth by percent (Pop_Growth), Inflation consumer price (API), Education Statistic (KSI), Unemployment rate based of countries total (KSI, because I was going insane). There was additional information provided with Poverty rate, inflation and Population growth however it was not important enough to add. 
 ## Data sets:
 ```{r}
+library(stringr)
+library(stargazer)
 ND <- read.csv("New_DDAY.csv")
-ND2 <- read.csv("NEW_DDAY_dos.csv")
 API <- read.csv("API_A.csv")
-SN_API <- read.csv("API_B.csv")
 Pop_Growth <- read.csv("Pop_Growth.csv")
+unemployment <- read.csv("Unemployment.csv")
+Education <- read.csv("Education.csv")
 ```
 
 ## Cleaning the Data:
-For each of the three data sets, it was needed to recreate a data frame since the original csv file showed each excel file to have their rows and columns in the wrong place. Since basic R function like summary() or mean() would grab information from the file's columns, it would output an answer. However the number result would be wrong since it would be grabbing all 270 countries info for 1960. So df_ND,API,PG are just data frames with all the numeric information of the orginal csv file. So it looks more visually more appealing and so it be a ton easier to use any built in graphing function that will not produce the wrong result.
-# Code for New_DDAY
+For all the data sets being presented here, all were downloaded in a wide form for an excel spread sheet. Any other method did not work, which is why for the idea to work I needed to have it in long form. So after stripping each row, I would divide each row into groups of 270 of 65 indexes long. Then i would be able to create a new data frame for each csv file so it be easier to ru further code and not look like an eyesore otherwise. The associated varible names were df_ND,df_API,df_PG,df_ed,df_KSI.
+
+# Code for ND
 
 ```{r}
 #Item names: row_ND, not_imp, ind_row, RC, row_ND,vari_RC.
 row_ND <- c() 
+mid <- c()
 not_imp <- c() #useless vector
 for (ind_row in rownames(ND)){
   for (i in ND[ind_row,]){
     RC <- as.character(i)
     if (is.na(RC)){
+      #might screw results so swap to NA????
       RC <- 0
       row_ND <- c(row_ND, RC)
       
@@ -81,15 +82,22 @@ fin_ND <- split(a, ND_by_65)
 # Data Frame for ND with rows and columns switched: df_ND
 ```{r}
 # must have this chunk running first if you want the other similar section to function!!
-col_nm <- ND[,1][5:270]
+col_nm_all <- ND[,1][5:270]
 df_ND <- data.frame(fin_ND[5:270])
-
-colnames(df_ND) <- c(col_nm)
+colnames(df_ND) <- c(col_nm_all)
 years <- c(1960:2024) 
 rownames(df_ND) <- c(years)
+df_ND$idea <- ifelse(df_ND$Aruba >= 0, 0)
+for (idk in colnames(df_ND)){
+  df_ND$idea <- as.numeric(df_ND$idea) + as.numeric(df_ND[[idk]])
+  df_ND$Poverty_rate <- ifelse(df_ND$Aruba >= 0, df_ND$idea/ 270)
+}
 ```
 
-## Supporting data sets: API and Pop_Growth
+
+## Supporting data sets: API, Pop_Growth, Education and Unemployment
+
+
 
 ```{r}
 #Item names: row_API, not_imp_2, ind_API, RC_2,vari_RC_2.
@@ -130,6 +138,11 @@ df_API <- data.frame(col_nm = fin_API[5:270])
 
 colnames(df_API) <- c(col_nm_2)
 rownames(df_API) <- c(years)
+df_API$idea <- ifelse(df_API$Aruba >= -1, 0,0)
+for (idk_2 in colnames(df_API)){
+  df_API$idea <- as.numeric(df_API$idea) + as.numeric(df_API[[idk_2]])
+  df_ND$`Inflation` <- ifelse(df_API$Aruba >= -1, df_API$idea/ 270, 0)
+}
 ```
 
 
@@ -175,81 +188,187 @@ df_PG <- data.frame(col_nm = fin_PG[5:270])
 
 colnames(df_PG) <- c(col_nm_3)
 rownames(df_PG) <- c(years)
-
-
-
+df_PG$idea <- ifelse(df_PG$Aruba >= -1, 0,0)
+for (idk_3 in colnames(df_API)){
+  df_PG$idea <- as.numeric(df_PG$idea) + as.numeric(df_PG[[idk_3]])
+  df_ND$`Population` <- ifelse(df_PG$Aruba >= -10000,0, df_PG$idea/ 270)
+}
 ```
-# Variables and number of observations:
 
-1. How many observations: `nrow()` function.
-2. How many variables: `ncol()` function.
-3. Dimensions of data frame: `dim()` function.
+
+
+# Process for Unemployment
+```{R}
+#this is from previous chuck, my laptop is being annoying by not working properly.
+row_unemp <- c()
+NI_1 <- c() #useless vector
+for (un in rownames(unemployment)){
+  for (j in unemployment[un,]){
+    RC_4 <- as.character(j)
+    if (is.na(RC_4)){
+      RC_4 <- 0
+      row_unemp <- c(row_unemp, RC_4)
+      
+     } else {
+       vari_RC_4 <- suppressWarnings(as.numeric(RC_4))
+                                    
+                                    
+                                    
+      if (!is.na(vari_RC_4)){
+        row_unemp <- c(row_unemp, RC_4)
+      } else if (RC_4 != ""){
+        NI_1 <- c(NI_1, RC_4)
+        }
+    }
+  }
+}
+```
+
+# Look at main data set grouping section for explanation
+```{r}
+d <- row_unemp
+unemp_by_65 <- rep(1:270, each = 65)
+fin_unempo <- split(d, unemp_by_65)
+```
+
+## Data Frame for Unemployment with rows and columns switched: df_ed
+```{r}
+col_nm_4 <- unemployment[,1][5:270]
+df_unemployment <- data.frame(fin_unempo[5:270])
+
+colnames(df_unemployment) <- c(col_nm_4)
+rownames(df_unemployment) <- c(years)
+```
 
 ```{r}
-print("All three Data Sets have the same rows, columns and dimensions")
-nrow(df_ND) # No. of observations.
-ncol(df_ND) # No. of variables of interest.
-dim(df_ND)  # both.
+df_unemployment$idea <- ifelse(df_unemployment$Aruba >= -1, 0,0)
+for (idk_4 in colnames(df_unemployment)){
+  df_unemployment$idea <- as.numeric(df_unemployment$idea) + as.numeric(df_unemployment[[idk_4]])
+  df_ND$`Unemployment` <- ifelse(df_unemployment$Aruba >= -10000,df_unemployment$idea/ 270,0)
+}
 ```
 
-# Will the data be generated through a randomized simulation?
-In our case no, unless forecast counts as randomzied simulations. 
+
+# KSI or Education
+```{r}
+#im coping and pasting the same code from the ealrier chucks because my mouse and touch pad of my Lenovo laptop has stop working. I'm using touch pad!!!!!!!
+row_ed <- c()
+not_ed <- c() # not KSI
+for (learn in rownames(Education)){
+  for (i in Education[learn,]){
+    RC_ed <- as.character(i)
+    if (is.na(RC_ed)){
+      RC_ed <- 0
+      row_ed <- c(row_ed, RC_ed)
+      
+     } else {
+       vari_RC_ed <- suppressWarnings(as.numeric(RC_ed))
+                                    
+                                    
+                                    
+      if (!is.na(vari_RC_ed)){
+        row_ed <- c(row_ed, RC_ed)
+      } else if (RC_ed != ""){
+        not_ed <- c(not_ed, RC_ed)
+        }
+    }
+  }
+}
+```
+
+# Look at main data set grouping section for explanation
+```{r}
+k <- row_ed
+ed_by_65 <- rep(1:270, each = 65)
+fin_ed <- split(k, ed_by_65)
+```
+
+## Data Frame for Education with rows and columns switched: df_KSI
+```{r}
+col_nm_ed <- Education[,1][5:270]
+df_ed <- data.frame(col_nm_ed = fin_ed[5:270])
+
+colnames(df_ed) <- c(col_nm_ed)
+rownames(df_ed) <- c(years)
+df_ed$Education <- ifelse(df_ed$Aruba >= -1, 0,0)
+for (idk_ed in colnames(df_ed)){
+  df_ed$Education <- as.numeric(df_ed$Education) + as.numeric(df_ed[[idk_ed]])
+  df_ND$`Education % from GDP` <- ifelse(df_ed$Aruba >= -10000,df_ed$Education/ 270)
+}
+```
+
+```{r}
+df_ND$Time <- ifelse(df_ed$Aruba >= -10000, c(1960:2024))
+life <- lm(Poverty_rate ~ Inflation + Population + Unemployment + `Education % from GDP` + Time + (Time^2), data = df_ND)
+stargazer(life,
+          title="Poverty rate lm",
+          header=F,
+          font.size = "tiny",
+          type = "text",
+          algin = T,
+          single = F,
+          column.sep.width = "1pt",
+          digits =2)
+```
+Dependent Variable is Poverty rate of the World:
+For every 1 increase in percentage for Inflation, it is expected that the Poverty rate will increase by 0.07% points at years end.
+
+For every additional rise in percentage for Population growth,it is expected that the Poverty rate will decrease by -0.09% points at years end.
+
+For every rise in percentage for Unemployment, it is expected that the Poverty rate will increase by .48% points.
+
+For every rise in Education in percent, it is expected that the Poverty rate will decrease by -.10% points.
+
+The only independent variables that would of have passed the p-level of 0.05 is Inflation and Unemployment. However only Unemployment passes a p-level of 0.01.
 
 ## Visualization:
-```{r}
-##df_ND[,266] is the last country (Zimbabwe). Because I set fin_ND[5:270], so we can skip the first 3 rows of zeros and country years
-i = 1
-while ( i < 267 ){
-  sum_ND <- summary(as.double(df_ND[,i]))
-  sum_API <- summary(as.double(df_API[,i]))
-  sum_PG <- summary(as.double(df_PG[,i]))
-  i = i + 1
-  
+VIF = measures if multicolineairty: to see if the variables are truly independent of each other. 
+Honestly, the result for the variables are quite high however they are still lower than 5. So they are somewhat influecning each other, though not to the level that it would bring sway to the results. 
 
-}
+IMPORTANT: if I add time as a variable, causes r^2 to rise slightly but when if comes to looking for truely independence. Time influnces Unemployment and Education, since it being 7.326.
+```{r}
+library(car)
+require(graphics)
+plot(life)
+vif(life)
+```
+# Heat map idea is not going to work: double back on lectures and see if there is a better way to vsiualize this. ggplot, plots, and any of the linear regresion lectures. 
+```{r}
+plot(df_ND$`Poverty_rate`,df_ND$Inflation,
+     xlab = "Inflation",
+     ylab = "World's Poverty rate",
+     main = "Visual of linear regression",
+     col = "blue",)
+plot(df_ND$`Poverty_rate`,df_ND$Population,
+     xlab = "Population",
+     ylab = "World's Poverty rate",
+     main = "Visual of linear regression",
+     col = "red",)
+plot(df_ND$`Poverty_rate`,df_ND$Unemployment,
+     xlab = "Unemployment",
+     ylab = "World's Poverty rate",
+     main = "Visual of linear regression",
+     col = "green",)
+plot(df_ND$`Poverty_rate`,df_ND$`Education % from GDP`,
+     xlab = "Education % from GDP",
+     ylab = "World's Poverty rate",
+     main = "Visual of linear regression",
+     col = "black",)
+plot(df_ND$`Poverty_rate`,df_ND$`Time`,
+     xlab = "Time since 1960",
+     ylab = "Poverty rate",
+     main = "Visual of linear regression",
+     col = "black",)
+cor(df_ND$`Poverty_rate`,df_ND$Inflation)
+cor(df_ND$`Poverty_rate`,df_ND$Population)
+#Population is the weakest, but its the only one that has a negative asosication
+cor(df_ND$`Poverty_rate`,df_ND$Unemployment)
+cor(df_ND$`Poverty_rate`,df_ND$`Education % from GDP`)
+cor(df_ND$`Poverty_rate`,df_ND$Time)
+
 
 ```
-
-# Preliminary visualization:
-We will be using linear regression, since it would not only help to answer our question. It would however make it easier to properly present our findings for the analysis section. Additionally the plan for this section is to compile the data into a linear regression so we are able to compare inflation to the Poverty head count for each 270 countries. Then we will code a way to compile all the results into four main groups, one for no signifcances and the other three will be based on p-value groups that the linear regression provides.
 ```{r}
-library("ggplot2")
-library("stargazer")
-#If we want a linear regression to run, we must keep each df_ND$ as a double type.
 
-A1 <- lm(as.double(df_API$Australia) ~ as.double(df_API$Austria), data = df_API)
-
-B1 <- lm(as.double(df_API$`Viet Nam`) ~ as.double(df_API$Vanuatu), data = df_API)
-
-C1 <- lm(as.double(df_ND$Australia) ~ as.double(df_ND$Austria), data = df_ND)
-
-D1 <- lm(as.double(df_ND$`Viet Nam`) ~ as.double(df_ND$Vanuatu), data = df_ND)
-
-E1 <- lm(as.double(df_ND$Spain) ~ as.double(df_ND$Estonia), data = df_ND)
-```
-
-```{r}
-#four is the max amount of lm() we can have per stargazer(), because 5 becomes a crowded.
-stargazer(A1,B1,C1,D1,
-            header=FALSE,
-            font.size = "tiny",
-            type = "text",
-            algin = TRUE,
-            single = FALSE,
-            column.sep.width = "1pt",
-            digits =2)
-stargazer(E1,
-            header=FALSE,
-            font.size = "tiny",
-            type = "text",
-            algin = TRUE,
-            single = FALSE,
-            column.sep.width = "1pt",
-            digits =2)
-```
-# Analysis:
-Then we will use the group that passes the lowest p-values as our defined findings. This is where the previous two data sets of API_2, and NEW_DDAY dos will come in handing in terms of trying to explain what reason cause us to see the results that we end up finding. And additional see if forecasting the results is even possible.
-```{r}
-# associated relocation of p-values of each linear regression for each country would be placed here.
 ```
 
