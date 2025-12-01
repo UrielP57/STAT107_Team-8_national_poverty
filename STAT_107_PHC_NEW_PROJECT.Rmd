@@ -299,8 +299,12 @@ for (idk_ed in colnames(df_ed)){
 
 ```{r}
 df_ND$Time <- ifelse(df_ed$Aruba >= -10000, c(1960:2024))
-life <- lm(Poverty_rate ~ Inflation + Population + Unemployment + `Education % from GDP` + Time + (Time^2), data = df_ND)
-stargazer(life,
+
+life <- lm(Poverty_rate ~ Inflation + Population + Unemployment + `Education % from GDP` + Time, data = df_ND)
+life_x2 <- glm(Poverty_rate ~ Inflation + Population + Unemployment + `Education % from GDP`, data = df_ND)
+life_v3 <- glm(Poverty_rate ~ Inflation + Population + Unemployment + `Education % from GDP` + poly(Time, 2), data = df_ND)
+life_m7 <- glm(Poverty_rate ~ Inflation + Population + Unemployment + `Education % from GDP` + poly(Time, 3), data = df_ND)
+stargazer(life, life_x2,life_v3,life_m7,
           title="Poverty rate lm",
           header=F,
           font.size = "tiny",
@@ -329,8 +333,10 @@ IMPORTANT: if I add time as a variable, causes r^2 to rise slightly but when if 
 ```{r}
 library(car)
 require(graphics)
-plot(life)
+plot(life_m7)
 vif(life)
+vif(life_m7)
+plot(life)
 ```
 # Heat map idea is not going to work: double back on lectures and see if there is a better way to vsiualize this. ggplot, plots, and any of the linear regresion lectures. 
 ```{r}
