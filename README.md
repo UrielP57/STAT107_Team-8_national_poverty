@@ -1,24 +1,31 @@
 # STAT107_PHC_Donnie_Marianne_Uriel
+### Introduction
+# Purpose:
+The purpose of this experiment is to figure out if the choose independent variables not only prove that to influence the Poverty Headcount ratio. But to potentially figure out if by building a linear regression (either with transformation or alternative one) can help fores the next decades world wide poverty rate. The result of this research can help organization as United Nations to create a movement to either compile member nations to invest more of their GDP into education and improving their individual economies. And whatever policies they move will affect businesses on all levels and those on a consumer level. 
 
-## Introduction: 
-The purpose of this experiment was to create and train a model to not only establish a connection with the Poverty headcount ratio between the Inflation and Population Growth. But potential create a means to see trends that will eventually help foresee potential spikes worldwide. This analysis should be to benefit government institutions that not only track but try to influence how much inflation would inflict upon society as a whole. Moreover to see as if the world's population continues to rise, the poverty line would be swayed by it. This would implicate federal policies that end up being passed or being killed in the senate. Which in turn would affect local business all the way to international ones and even affect industries on mutiple levels.
+# Benefit:
+This analysis should be to benefit government institutions that not only track but try to influence how much inflation would inflict upon society as a whole. Additionally knowing whether not a country like United Kingdom can reduce their nation's Poverty rate if unemployment is deemed the most influencing variable. The same applies for population growth however that is less controllable while being confined to moral reasons. 
 
-## Question: 
-Main Question: Is there a statistically significant correlation between inflation rate and the Poverty headcount ratio across countries worldwide?
-Sub-Question: Which of the two effects; inflation rate or population growth, have a bigger influenced when it comes to affecting the Poverty headocunt ratio?
+# Question
+-Main Question: Is the choose variables of average of; Education% per GDP, Unemployment, Population growth, Inflation able to influence the Poverty rate of the world?
 
-## Plan: 
-We hope to answer our question since, if we are able to establish a connection between inflation to PHC. Then going forward it would be possible to train a model that could potential forecast the trends of inflation which would help government bodies worldwide create plans to counteract these shifts. However for the sub question, it is more of means of determining which of the two effects have a bigger influence if they do.
+-Sub-Question: Is it possible to forecast the Poverty headcount ratio for the foreseeable future. 
 
-## Data: 
-The data that is available is NEW_DDAY and NEW_DDAY dos are from the same set (Poverty Head Count at $3.00 a day (2021 PPP)), API_1 and API_2 are from the same data set (Inflation consumer prices (annual %) for the World, Grow (Population growth (annual%)). However API_2 and NEW_DDAY dos is less about data and its importance is more of the information it can present since it contains notes left behind from the makers of the csv file. That would explain why certain values appeared.  
+# Plan:
+We hope to answer our question since, if it is determined that the independent variables have a significant ability to influence the Poverty head count ratio. Then going forward it would be possible to train a model that could potential forecast which would help government bodies worldwide create plans to counteract these shifts.
 
-## Cleaning the Data: 
-For each of the three data sets, it was needed to recreate a data frame since the original csv file showed each excel file to have their rows and columns in the wrong place. Since basic R function like summary() or mean() would grab information from the file's columns, it would output an answer. However the number result would be wrong since it would be grabbing all 270 countries info for 1960. So df_ND,API,PG are just data frames with all the numeric information of the orginal csv file. So it looks more visually more appealing and so it be a ton easier to use any built in graphing function that will not produce the wrong result.  
+## Data 
+There are currently five different data sets, all of which are from World Bank Group database. The dependent variable is currently referencing to Poverty Headcount ratio or Poverty rate for short($3.00 a day) being names as ND. The independent variables are about annual Population growth by percent (Pop_Growth), Inflation consumer price (API), Education Statistic (Education), Unemployment rate based of countries total (unemployment). There was additional information provided with Poverty rate, inflation and Population growth however it was not important enough to add. 
+
+## Cleaning the Data:
+For all the data sets being presented here, all were downloaded in a wide form for an excel spread sheet. Any other method did not work, which is why for the idea to work I needed to have it in long form. So after stripping each row, I would divide each row into groups of 270 of 65 indexes long. Then i would be able to create a new data frame for each csv file so it be easier to ru further code and not look like an eyesore otherwise. The associated varible names were df_ND,df_API,df_PG,df_Unemp,df_ed. 
 
 ## Visualization: 
-We will be using linear regression, since it would not only help to answer our question. It would however make it easier to properly present our findings for the analysis section. Additionally the plan for this section is to compile the data into a linear regression so we are able to compare inflation to the Poverty head count for each 270 countries. Then we will code a way to compile all the results into four main groups, one for no signifcances and the other three will be based on p-value groups that the linear regression provides. 
+Using not only linear regression but glm() function, we were able to created a forumla that not only did not better suit the data as a whole. It additionally was the best appalciation of said forumla, since applying poly(x, n) to the forumla onto Time varible. This allowed best version of glm created but it was a better fit when trying to use lm(). We ended up using plot() to plot the glm function, which gave us four different vsiuals: Residuals vs Fitted, Q-Qresiduals, Scale location, Residual-Leverage. 
 ## Analysis:
-Then we will use the group that passes the lowest p-values as our defined findings. This is where the previous two data sets of API_2, and NEW_DDAY dos will come in handing in terms of trying to explain what reason cause us to see the results that we end up finding. And additional see if forecasting the results is even possible. 
+??????
+Ideas:
+explain how each indepedent variable inetracts with the dependent
+explain each result of the plot(glm())
 
 
