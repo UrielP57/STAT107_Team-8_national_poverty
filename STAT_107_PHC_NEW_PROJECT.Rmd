@@ -29,8 +29,9 @@ knitr::opts_chunk$set(echo = TRUE)
 There are currently five different data sets, all of which are from World Bank Group database. The dependent variable is currently referencing to Poverty Headcount ratio or Poverty rate for short($3.00 a day) being names as ND. The independent variables are about annual Population growth by percent (Pop_Growth), Inflation consumer price (API), Education Statistic (KSI), Unemployment rate based of countries total (KSI, because I was going insane). There was additional information provided with Poverty rate, inflation and Population growth however it was not important enough to add. 
 ## Data sets:
 ```{r}
-library(stringr)
 library(stargazer)
+library(car)
+require(graphics)
 ND <- read.csv("New_DDAY.csv")
 API <- read.csv("API_A.csv")
 Pop_Growth <- read.csv("Pop_Growth.csv")
@@ -39,49 +40,44 @@ Education <- read.csv("Education.csv")
 ```
 
 ## Cleaning the Data:
-For all the data sets being presented here, all were downloaded in a wide form for an excel spread sheet. Any other method did not work, which is why for the idea to work I needed to have it in long form. So after stripping each row, I would divide each row into groups of 270 of 65 indexes long. Then i would be able to create a new data frame for each csv file so it be easier to ru further code and not look like an eyesore otherwise. The associated varible names were df_ND,df_API,df_PG,df_ed,df_KSI.
+For all the data sets being presented here, all were downloaded in a wide form for an excel spread sheet. Any other method did not work, which is why for the idea to work I needed to have it in long form. So after stripping each row, I would divide each row into groups of 270 of 65 indexes long. Then i would be able to create a new data frame for each csv file so it be easier to ru further code and not look like an eyesore otherwise. The associated varible names were df_ND,df_API,df_PG,df_Unemp,df_ed.
 
 # Code for ND
 
 ```{r}
-#Item names: row_ND, not_imp, ind_row, RC, row_ND,vari_RC.
-row_ND <- c() 
-mid <- c()
-not_imp <- c() #useless vector
-for (ind_row in rownames(ND)){
-  for (i in ND[ind_row,]){
-    RC <- as.character(i)
-    if (is.na(RC)){
-      #might screw results so swap to NA????
-      RC <- 0
-      row_ND <- c(row_ND, RC)
-      
-     } else {
-       vari_RC <- suppressWarnings(as.numeric(RC))
-                                      
-                                      
-        if (!is.na(vari_RC)){
-          row_ND <- c(row_ND, RC)
-          }  else if (RC != ""){
-          not_imp <- c(not_imp, RC)
-          }
+swappy_swappy <- function(df){
+  row <- c() 
+  mid <- c()
+  not_imp <- c() #useless vector
+  for (ind_row in rownames(df)){
+    for (i in df[ind_row,]){
+      RC <- as.character(i)
+      if (is.na(RC)){
+        RC <- 0
+        row <- c(row, RC)
+        
+       } else {
+         vari_RC <- suppressWarnings(as.numeric(RC))
+                                        
+                                        
+          if (!is.na(vari_RC)){
+            row <- c(row, RC)
+            }  else if (RC != ""){
+            not_imp <- c(not_imp, RC)
+            }
+      }
     }
   }
+  df_by_65 <- rep(1:270, each = 65)
+  fin <- split(row, df_by_65)
+  return(fin)
 }
-```
-
-# find_ND: Get groups of 270 and each group has a length of 65. Then use split() to apply that row_ND
-```{r}
-a <- row_ND
-ND_by_65 <- rep(1:270, each = 65)
-fin_ND <- split(a, ND_by_65)
 
 ```
 
-
-# Data Frame for ND with rows and columns switched: df_ND
+# Data frame cleaning for Poverty Rate:
 ```{r}
-# must have this chunk running first if you want the other similar section to function!!
+fin_ND <- swappy_swappy(ND)
 col_nm_all <- ND[,1][5:270]
 df_ND <- data.frame(fin_ND[5:270])
 colnames(df_ND) <- c(col_nm_all)
@@ -94,45 +90,10 @@ for (idk in colnames(df_ND)){
 }
 ```
 
-
-## Supporting data sets: API, Pop_Growth, Education and Unemployment
-
-
-
+# Data Frame cleaning for Inflation:
 ```{r}
-#Item names: row_API, not_imp_2, ind_API, RC_2,vari_RC_2.
-row_API <- c() 
-not_imp_2 <- c() #useless vector
-for (ind_API in rownames(API)){
-  for (i in API[ind_API,]){
-    RC_2 <- as.character(i)
-    if (is.na(RC_2)){
-      RC_2 <- 0
-      row_API <- c(row_API, RC_2)
-      
-     } else {
-       vari_RC_2 <- suppressWarnings(as.numeric(RC_2))
-                                    
-                                    
-        if (!is.na(vari_RC_2)){
-          row_API <- c(row_API, RC_2)
-          } else if (RC_2 != ""){
-          not_imp_2 <- c(not_imp_2, RC_2)
-        }
-    }
-  }
-}
-```
+fin_API <- swappy_swappy(API)
 
-# Look at main data set grouping section for explanation
-```{r}
-b <- row_API
-API_by_65 <- rep(1:270, each = 65)
-fin_API <- split(b, API_by_65)
-```
-
-## Data Frame for API with rows and columns switched: df_API
-```{r}
 col_nm_2 <- API[,1][5:270]
 df_API <- data.frame(col_nm = fin_API[5:270])
 
@@ -145,44 +106,10 @@ for (idk_2 in colnames(df_API)){
 }
 ```
 
-
-
-## Pop_Growth
+#Data Farme Cleaning for Population growth:
 ```{r}
-#Item names: row_PG, NI, ind_PG, RC_3,vari_RC_3.
-row_PG <- c()
-NI <- c() #useless vector
-for (ind_PG in rownames(Pop_Growth)){
-  for (i in Pop_Growth[ind_PG,]){
-    RC_3 <- as.character(i)
-    if (is.na(RC_3)){
-      RC_3 <- 0
-      row_PG <- c(row_PG, RC_3)
-      
-     } else {
-       vari_RC_3 <- suppressWarnings(as.numeric(RC_3))
-                                    
-                                    
-                                    
-      if (!is.na(vari_RC_3)){
-        row_PG <- c(row_PG, RC_3)
-      } else if (RC_3 != ""){
-        NI <- c(NI, RC_3)
-        }
-    }
-  }
-}
-```
+fin_PG <- swappy_swappy(Pop_Growth)
 
-# Look at main data set grouping section for explanation
-```{r}
-c <- row_PG
-PG_by_65 <- rep(1:270, each = 65)
-fin_PG <- split(c, PG_by_65)
-```
-
-## Data Frame for Pop_Growth with rows and columns switched: df_PG
-```{r}
 col_nm_3 <- Pop_Growth[,1][5:270]
 df_PG <- data.frame(col_nm = fin_PG[5:270])
 
@@ -195,52 +122,16 @@ for (idk_3 in colnames(df_API)){
 }
 ```
 
-
-
-# Process for Unemployment
-```{R}
-#this is from previous chuck, my laptop is being annoying by not working properly.
-row_unemp <- c()
-NI_1 <- c() #useless vector
-for (un in rownames(unemployment)){
-  for (j in unemployment[un,]){
-    RC_4 <- as.character(j)
-    if (is.na(RC_4)){
-      RC_4 <- 0
-      row_unemp <- c(row_unemp, RC_4)
-      
-     } else {
-       vari_RC_4 <- suppressWarnings(as.numeric(RC_4))
-                                    
-                                    
-                                    
-      if (!is.na(vari_RC_4)){
-        row_unemp <- c(row_unemp, RC_4)
-      } else if (RC_4 != ""){
-        NI_1 <- c(NI_1, RC_4)
-        }
-    }
-  }
-}
-```
-
-# Look at main data set grouping section for explanation
+#Data Frame Cleaning for Unemployment
 ```{r}
-d <- row_unemp
-unemp_by_65 <- rep(1:270, each = 65)
-fin_unempo <- split(d, unemp_by_65)
-```
+fin_unempo <- swappy_swappy(unemployment)
 
-## Data Frame for Unemployment with rows and columns switched: df_ed
-```{r}
 col_nm_4 <- unemployment[,1][5:270]
 df_unemployment <- data.frame(fin_unempo[5:270])
 
 colnames(df_unemployment) <- c(col_nm_4)
 rownames(df_unemployment) <- c(years)
-```
 
-```{r}
 df_unemployment$idea <- ifelse(df_unemployment$Aruba >= -1, 0,0)
 for (idk_4 in colnames(df_unemployment)){
   df_unemployment$idea <- as.numeric(df_unemployment$idea) + as.numeric(df_unemployment[[idk_4]])
@@ -248,43 +139,10 @@ for (idk_4 in colnames(df_unemployment)){
 }
 ```
 
-
-# KSI or Education
+#Data Frame Cleaning for Education % from GDP
 ```{r}
-#im coping and pasting the same code from the ealrier chucks because my mouse and touch pad of my Lenovo laptop has stop working. I'm using touch pad!!!!!!!
-row_ed <- c()
-not_ed <- c() # not KSI
-for (learn in rownames(Education)){
-  for (i in Education[learn,]){
-    RC_ed <- as.character(i)
-    if (is.na(RC_ed)){
-      RC_ed <- 0
-      row_ed <- c(row_ed, RC_ed)
-      
-     } else {
-       vari_RC_ed <- suppressWarnings(as.numeric(RC_ed))
-                                    
-                                    
-                                    
-      if (!is.na(vari_RC_ed)){
-        row_ed <- c(row_ed, RC_ed)
-      } else if (RC_ed != ""){
-        not_ed <- c(not_ed, RC_ed)
-        }
-    }
-  }
-}
-```
+fin_ed <- swappy_swappy(Education)
 
-# Look at main data set grouping section for explanation
-```{r}
-k <- row_ed
-ed_by_65 <- rep(1:270, each = 65)
-fin_ed <- split(k, ed_by_65)
-```
-
-## Data Frame for Education with rows and columns switched: df_KSI
-```{r}
 col_nm_ed <- Education[,1][5:270]
 df_ed <- data.frame(col_nm_ed = fin_ed[5:270])
 
@@ -297,14 +155,13 @@ for (idk_ed in colnames(df_ed)){
 }
 ```
 
+
 ```{r}
 df_ND$Time <- ifelse(df_ed$Aruba >= -10000, c(1960:2024))
 
 life <- lm(Poverty_rate ~ Inflation + Population + Unemployment + `Education % from GDP` + Time, data = df_ND)
-life_x2 <- glm(Poverty_rate ~ Inflation + Population + Unemployment + `Education % from GDP`, data = df_ND)
-life_v3 <- glm(Poverty_rate ~ Inflation + Population + Unemployment + `Education % from GDP` + poly(Time, 2), data = df_ND)
-life_m7 <- glm(Poverty_rate ~ Inflation + Population + Unemployment + `Education % from GDP` + poly(Time, 3), data = df_ND)
-stargazer(life, life_x2,life_v3,life_m7,
+life_m7 <- lm(Poverty_rate ~ Inflation + Population + Unemployment + `Education % from GDP` + poly(Time, 3), data = df_ND)
+stargazer(life, life_m7,
           title="Poverty rate lm",
           header=F,
           font.size = "tiny",
@@ -334,47 +191,40 @@ IMPORTANT: if I add time as a variable, causes r^2 to rise slightly but when if 
 library(car)
 require(graphics)
 plot(life_m7)
+plot(life)
+
+
+```
+
+Analysis:
+If we run a null test at a p-level of .05, this would of been our results. 
+
+After running the glm function, only two of the five independent variables ended up being able to pass a p-level of 0.05 and below. They were Unemployment and Time; where unemployment is sitting conformable at 4.780527e-03 and Time's main variable is at 5.352967e-04. However I would want to clarify that Time was transformed using poly(x, n). which allowed it to gain ***. However for Unemployment it still would've passed but it would of been a much lower number.
+Outlines: There were three notable points that  kept on appearing when ploting the glm():2002, 1997 and 2021. These outlines are quite fantasizing since 2021 is during the year of which Covid-19 was the most rampant. While in 2002, the war on terror speech from president bush occurred (????idk). Lastly in 1997, there was a market crises in many Asian countries, where unemployment, wage declines and many currencies fell against the US dollar.
+
+
+```{r}
 vif(life)
 vif(life_m7)
-plot(life)
-```
-# Heat map idea is not going to work: double back on lectures and see if there is a better way to vsiualize this. ggplot, plots, and any of the linear regresion lectures. 
-```{r}
-plot(df_ND$`Poverty_rate`,df_ND$Inflation,
-     xlab = "Inflation",
-     ylab = "World's Poverty rate",
-     main = "Visual of linear regression",
-     col = "blue",)
-plot(df_ND$`Poverty_rate`,df_ND$Population,
-     xlab = "Population",
-     ylab = "World's Poverty rate",
-     main = "Visual of linear regression",
-     col = "red",)
-plot(df_ND$`Poverty_rate`,df_ND$Unemployment,
-     xlab = "Unemployment",
-     ylab = "World's Poverty rate",
-     main = "Visual of linear regression",
-     col = "green",)
-plot(df_ND$`Poverty_rate`,df_ND$`Education % from GDP`,
-     xlab = "Education % from GDP",
-     ylab = "World's Poverty rate",
-     main = "Visual of linear regression",
-     col = "black",)
-plot(df_ND$`Poverty_rate`,df_ND$`Time`,
-     xlab = "Time since 1960",
-     ylab = "Poverty rate",
-     main = "Visual of linear regression",
-     col = "black",)
+
 cor(df_ND$`Poverty_rate`,df_ND$Inflation)
 cor(df_ND$`Poverty_rate`,df_ND$Population)
-#Population is the weakest, but its the only one that has a negative asosication
+#Population is the weakest, but its the only one that has a negative classification
 cor(df_ND$`Poverty_rate`,df_ND$Unemployment)
 cor(df_ND$`Poverty_rate`,df_ND$`Education % from GDP`)
 cor(df_ND$`Poverty_rate`,df_ND$Time)
 
 
+pvals <- summary(life_m7)$coefficients
+pvals
+ex <- summary(life)$coefficients
+ex
 ```
-```{r}
-
 ```
-
+.18
+.18
+.0047
+.08
+.0005
+.0000000000007
+.00000000007
