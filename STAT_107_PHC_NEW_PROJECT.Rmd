@@ -32,17 +32,42 @@ There are currently five different data sets, all of which are from World Bank G
 library(stargazer)
 library(car)
 require(graphics)
-ND <- read.csv("New_DDAY.csv")
-API <- read.csv("API_A.csv")
-Pop_Growth <- read.csv("Pop_Growth.csv")
-unemployment <- read.csv("Unemployment.csv")
-Education <- read.csv("Education.csv")
+library(tidyverse)
+ND <- read.csv("New_DDAY.csv", skip = 4)
+hot <- ND[-2:-4]
+API <- read.csv("API_A.csv", skip = 4)
+hot_2 <- API[-2:-4]
+Pop_Growth <- read.csv("Pop_Growth.csv", skip = 4)
+hot_3 <- Pop_Growth[-2:-4]
+unemployment <- read.csv("Unemployment.csv", skip = 4)
+hot_4 <- unemployment[-2:-4]
+Education <- read.csv("Education.csv", skip =4)
+hot_5 <- Education[-2:-4]
 ```
 
 ## Cleaning the Data:
 For all the data sets being presented here, all were downloaded in a wide form for an excel spread sheet. Any other method did not work, which is why for the idea to work I needed to have it in long form. So after stripping each row, I would divide each row into groups of 270 of 65 indexes long. Then i would be able to create a new data frame for each csv file so it be easier to ru further code and not look like an eyesore otherwise. The associated varible names were df_ND,df_API,df_PG,df_Unemp,df_ed. Each annual variable is computed with the unweighted average across 270 countries. This will treat all countries equally regardless of population size,nwhich will result in some bias but will simplify the analysis.
 
 # Code for ND
+
+```{r}
+df_pr <- pivot_longer(hot, cols = X1960:X2024, names_to = "Years", names_prefix = "X", values_to = "Poverty Rate")
+df_INf <- pivot_longer(hot_2, cols = X1960:X2024, names_to = "Years", names_prefix = "X", values_to = "Inflation")
+df_PG <- pivot_longer(hot_3, cols = X1960:X2024, names_to = "Years", names_prefix = "X", values_to = "Population Growth")
+df_Unempo <- pivot_longer(hot_4, cols = X1960:X2024, names_to = "Years", names_prefix = "X", values_to = "Unempolyment")
+df_ED <- pivot_longer(hot_5, cols = X1960:X2024, names_to = "Years", names_prefix = "X", values_to = "Edcuation")
+```
+
+
+```{r}
+df_lm <- merge(df_pr,df_INf)
+df_lm <-merge(df_lm, df_PG)
+df_lm <- merge(df_lm, df_Unempo)
+df_lm <- merge(df_lm, df_ED)
+View(df_lm)
+
+```
+
 
 ```{r}
 swappy_swappy <- function(df){
@@ -83,6 +108,7 @@ df_ND <- data.frame(fin_ND[5:270])
 colnames(df_ND) <- c(col_nm_all)
 years <- c(1960:2024) 
 rownames(df_ND) <- c(years)
+
 df_ND$idea <- ifelse(df_ND$Aruba >= 0, 0)
 for (j in colnames(df_ND)){
   df_ND$idea <- as.numeric(df_ND$idea) + as.numeric(df_ND[[j]])
@@ -153,24 +179,38 @@ for (n in colnames(df_ed)){
   df_ed$Education <- as.numeric(df_ed$Education) + as.numeric(df_ed[[n]])
   df_ND$`Education % from GDP` <- ifelse(df_ed$Aruba >= -10000,df_ed$Education/ 270)
 }
-```
-
-
-```{r}
 df_ND$Time <- ifelse(df_ed$Aruba >= -10000, c(1960:2024))
-
-life <- lm(Poverty_rate ~ Inflation + Population + Unemployment + `Education % from GDP` + Time, data = df_ND)
-life_m7 <- lm(Poverty_rate ~ Inflation + Population + Unemployment + `Education % from GDP` + poly(Time, 3), data = df_ND)
-stargazer(life, life_m7,
-          title="Determinants of Poverty Rates: Linear and Polynomial Time Models",
-          header=F,
-          font.size = "tiny",
-          type = "text",
-          algin = T,
-          single = F,
-          column.sep.width = "1pt",
-          digits =2)
 ```
+
+
+#Visuals
+```{r}
+example <- df_ND[-38,]
+ex_2 <- example[-61,]
+df_ND_w_n_out <- ex_2[-42,]
+#I bascially removed year data for everything for 2002, 1997, 2021
+#eveythign below, we will be comapring three lm(), one w. tranformation, and the oher two both have poly() but the third one has the secon'd one's outliers removed.
+
+
+by_colors <- ifelse(df_ND$Poverty_rate != df_ND$Poverty_rate, rainbow(6), rainbow(6))
+pairs(df_ND[268:273], main = "Variable Relationship w/ outliers", pch = 21, bg = by_colors, lower.panel = NULL)
+pairs(df_ND_w_n_out[268:273], main = "Variable Relationship w/ no outliers", pch = 21, bg = by_colors, lower.panel = NULL)
+cor(df_ND$`Poverty_rate`,df_ND$Inflation)
+cor(df_ND$`Poverty_rate`,df_ND$Population)
+#Population is the weakest, but its the only one that has a negative classification
+cor(df_ND$`Poverty_rate`,df_ND$Unemployment)
+cor(df_ND$`Poverty_rate`,df_ND$`Education % from GDP`)
+cor(df_ND$`Poverty_rate`,df_ND$Time)
+print("gap")
+cor(df_ND_w_n_out$`Poverty_rate`,df_ND_w_n_out$Inflation)
+cor(df_ND_w_n_out$`Poverty_rate`,df_ND_w_n_out$Population)
+#Population is the weakest, but its the only one that has a negative classification
+cor(df_ND_w_n_out$`Poverty_rate`,df_ND_w_n_out$Unemployment)
+cor(df_ND_w_n_out$`Poverty_rate`,df_ND_w_n_out$`Education % from GDP`)
+cor(df_ND_w_n_out$`Poverty_rate`,df_ND_w_n_out$Time)
+```
+
+
 Dependent Variable is Poverty rate of the World:
 A 1% increase for Inflation is associated with an estimated 8% increase in Poverty Rate by the end of the year.
 
@@ -186,60 +226,46 @@ The only independent variables that would of have passed the p-level of 0.05 is 
 VIF = measures if multi colinearity: to see if the variables are truly independent of each other. 
 Honestly, the result for the variables are quite high however they are still lower than 5. So they are somewhat influencing each other, though not to the level that it would bring sway to the results. 
 
-IMPORTANT: if I add time as a variable, causes r^2 to rise slightly but when if comes to looking for true independence, Time influences Unemployment and Education, since it being 7.326.
-```{r}
-library(car)
-require(graphics)
-resid_plot <- function(model, title="Residuals vs Fitted") {
-  fv <- fitted(model)
-  res <- resid(model)
-  
-  plot(fv, res,
-       pch = 19, cex = 1.2,
-       xlab = "Fitted Values",
-       ylab = "Residuals",
-       main = title)
-  
-  abline(h = 0, col = "gray60", lwd = 2)
-  lines(lowess(fv, res), col = "red", lwd = 2)
-}
+IMPORTANT: if I add time as a variable, causes r^2 to rise slightly but when if comes to looking for truely independence. Time influnces Unemployment and Education, since it being 7.326.
 
-resid_plot(life, "Residuals vs Fitted (Linear Model)")
-resid_plot(life_m7, "Residuals vs Fitted (Cubic Time Model)")
-
-
-
-```
 
 Analysis:
 If we run a null test at a p-level of .05, this would of been our results. 
 
 After running the glm function, only two of the five independent variables ended up being able to pass a p-level of 0.05 and below. They were Unemployment and Time; where unemployment is sitting conformable at 4.780527e-03 and Time's main variable is at 5.352967e-04. However I would want to clarify that Time was transformed using poly(x, n). which allowed it to gain ***. However for Unemployment it still would've passed but it would of been a much lower number.
-Outlines: The two models show a decent R^2 value at 64%, however, the graphs do not represent that as they show spread out data. This is due to many outliers in the graph which correspond to certain major events, such as COVID in 2020. Thus, the simple linear model isn't a good fit for our dataset. The cubic time model, however, shows a better fit, as the R^2 value is strong at 89%, and that is demonstrated in the data, even though there are still multiple outliers. This overall is a better fit for our dataset. 
-
+Outlines: There were three notable points that  kept on appearing when ploting the glm():2002, 1997 and 2021. These outlines are quite fantasizing since 2021 is during the year of which Covid-19 was the most rampant. While in 2002, the war on terror speech from president bush occurred (????idk). Lastly in 1997, there was a market crises in many Asian countries, where unemployment, wage declines and many currencies fell against the US dollar.
 
 ```{r}
+
+
+
+life <- lm(Poverty_rate ~ Inflation + Population + Unemployment + `Education % from GDP` + Time, data = df_ND)
+life_outliers <-lm(Poverty_rate ~ Inflation + Population + Unemployment + `Education % from GDP` + poly(Time, 3), data = df_ND_w_n_out)
+life_m7 <- lm(Poverty_rate ~ Inflation + Population + Unemployment + `Education % from GDP` + poly(Time, 3), data = df_ND)
+stargazer(life, life_m7, life_outliers,
+          title="Poverty rate lm",
+          header=F,
+          font.size = "tiny",
+          type = "text",
+          algin = T,
+          single = F,
+          column.sep.width = "1pt",
+          digits =2)
+```
+
+```{r}
+library(car)
+require(graphics)
+plot(life_m7)
+plot(life)
+plot(life_outliers)
+```
+
+```{r}
+barplot(vif(life))
+barplot(vif(life_m7))
+barplot(vif(life_outliers))
 vif(life)
+vif(life_outliers)
 vif(life_m7)
-
-cor(df_ND$`Poverty_rate`,df_ND$Inflation)
-cor(df_ND$`Poverty_rate`,df_ND$Population)
-#Population is the weakest, but its the only one that has a negative classification
-cor(df_ND$`Poverty_rate`,df_ND$Unemployment)
-cor(df_ND$`Poverty_rate`,df_ND$`Education % from GDP`)
-cor(df_ND$`Poverty_rate`,df_ND$Time)
-
-
-pvals <- summary(life_m7)$coefficients
-pvals
-ex <- summary(life)$coefficients
-ex
 ```
-```
-.18
-.18
-.0047
-.08
-.0005
-.0000000000007
-.00000000007

@@ -1,0 +1,111 @@
+---
+title: Do different Variables influence the Poverty Rate of the World?"
+author: "Uriel S. Pacheco-Guerrero, Donnie, Marianne"
+date: "`r Sys.Date()`"
+output: html_document
+---
+##Abstract:
+The idea of this study is to narrowed down which of the 6 predictors selected for this study, has considerably influenced the Poverty Headcount Ratio at $3.00 per day. The lucky predictors are Inflation, Population Growth, Unemployment, Education, Death rate and GDP. All but GDP are noted down by countries annual percent amounts, if that will be by percentages of GDP, total labor force, consumer price. By using two version of the linear regression model, we analyze the world's Poverty rate from a spanned of available data from 270 countries since the start of 1960 to 2024. 
+
+By running a mutli-variable linear regression model where model 1 will be the variables themselves with no transformation and model 2 will contain two transformations of square root and logarithmic. The results demonstrates that heavy weight predictors ended up being population growth, Death rate, GDP and Education since they ended up being more significant than Inflation and Unemployment. We applied squared root to the predicted variable (Poverty rate) to prevent skewness from extremely low or high points influencing our results. Knowing how critical to be costumed with the inner workings on what affects Poverty rate, could potential help raise the standard of living of most folks living right now. Additionally it could help influential individuals like world leaders, legislators, and organizations like the United nations to start enforcing policies. That can allow for more agencies to focus more on homeless, literacy levels, and free education for those willing to learn.  
+
+
+##Introduction:
+The goal of the analysis is to figure out if the choose variables do in fact influence the Poverty Rate. There are two question we intend to answer, the first being: Are the selected variables statistically significant to be able to influence the Poverty rate of the World. The second question: Is it possible to forecast the Poverty Headcount ratio for the foreseeable future accurately?
+
+The results of the analysis is meant to provide those in power like legislators that have the ability to relocate funds/pass laws to reduce the negative affects that are associated with the Poverty rate. Additionally by making these results public, they will allow the general public be aware of whats influencing the poverty rate for most country. To hopefully allow them to make their respected governments take more accountability, or even be more hands on with causing factors themselves. 
+
+By using the linear regression to forecast the upcoming years of the overall Poverty rate of the 270 countries, provide critical time for laws and help to be accomplished in time. We Hope to improve the model accuracy and ability to forecast new spikes by transforming the linear regression with square rooting the predicted results and by transforming GPD(in US dollar) into a more friendlier form so it won't skew the rest of the variables that are by percent.
+
+
+##Data:
+We are currently using 6 databases, all of which are from the World Bank Group database. The predicted variable is currently the Poverty Headcount ratio at $3.00 a day (Poverty rate). The predictor variables will be Population Growth (annual %), Inflation consumer price (annual %), Education(% of GDP), Unemployment rate (% of total workforce), GDP (in US dollars), and Death rate (crude % by [actual death/1000]). 
+
+
+
+
+##Data Cleaning:
+For all the data sets being presented here, all were downloaded in a wide form for an excel spread sheet.The rows were the 270 countries, and each column starting at column 5 were years of 1960 to 2024. However, actual data from any of the 7 data sets accumulated to be 17290 observation for each one.
+
+So to clean the data it was necessity to convert each data set into long form by using pivot_longer() of the tidyverse package. We started at 5 because we removed columns 2 through 4 because they were indicators from the original makers, and we did this by manually removing the columns such as ND[-2:-4] into a new data frame called hot. Additionally we skipped the first 4 rows of the data set to better set up the conversion function. 
+
+Then we converted the data frame by setting into a long form by using pivot_longer() of the tidyverse package. Were we would associated each data frame with its own long form such as df_pv for Poverty rate or df_INf for Inflation rate and so on. As so not to cause unintentional skewness, many entries have NA as their entry not because they were deleted or removed but because the given data set did not have an entry for them.   
+
+ 
+```{r}
+library(stargazer)
+library(car)
+require(graphics)
+library(tidyverse)
+ND <- read.csv("New_DDAY.csv", skip = 4)
+hot <- ND[-2:-4]
+API <- read.csv("API_A.csv", skip = 4)
+hot_2 <- API[-2:-4]
+PG <- read.csv("Pop_Growth.csv", skip = 4)
+hot_7 <- PG[-2:-4]
+DR <- read.csv("Death rate.csv", skip = 4)
+hot_3 <- DR[-2:-4]
+unemployment <- read.csv("Unemployment.csv", skip = 4)
+hot_4 <- unemployment[-2:-4]
+Education <- read.csv("Education.csv", skip =4)
+hot_5 <- Education[-2:-4]
+GDP <- read.csv("API_NY.GDP.PCAP.CD_DS2_en_csv_v2_2518.csv", skip =4)
+hot_6 <- GDP[-2:-4]
+```
+
+
+```{r}
+df_pr <- pivot_longer(hot, cols = X1960:X2024, names_to = "Years", names_prefix = "X", values_to = "Poverty Rate")
+df_INf <- pivot_longer(hot_2, cols = X1960:X2024, names_to = "Years", names_prefix = "X", values_to = "Inflation")
+df_PG <- pivot_longer(hot_7, cols = X1960:X2024, names_to = "Years", names_prefix = "X", values_to = "Population Growth")
+df_DR <- pivot_longer(hot_3, cols = X1960:X2024, names_to = "Years", names_prefix = "X", values_to = "Death Rate")
+df_Unempo <- pivot_longer(hot_4, cols = X1960:X2024, names_to = "Years", names_prefix = "X", values_to = "Unempolyment")
+df_ED <- pivot_longer(hot_5, cols = X1960:X2024, names_to = "Years", names_prefix = "X", values_to = "Edcuation")
+df_GDP <- pivot_longer(hot_6, cols = X1960:X2024, names_to = "Years", names_prefix = "X", values_to = "GDP")
+```
+
+```{r}
+df_lm <- merge(df_pr,df_INf)
+df_lm <- merge(df_lm, df_PG)
+df_lm <-merge(df_lm, df_DR)
+df_lm <- merge(df_lm, df_Unempo)
+df_lm <- merge(df_lm, df_ED)
+df_lm <- merge(df_lm, df_GDP)
+```
+
+```{r}
+library(car)
+life <- lm(`Poverty Rate` ~ Inflation + `Population Growth` + Unempolyment + Edcuation + GDP + `Death Rate`, data = df_lm)
+life_t5 <- lm(sqrt(`Poverty Rate`) ~ Inflation + `Population Growth` + Unempolyment + Edcuation + log(GDP) + `Death Rate`, data = df_lm)
+stargazer(life, life_t5,
+          title="Poverty rate lm",
+          header=F,
+          font.size = "tiny",
+          type = "text",
+          algin = T,
+          single = F,
+          column.sep.width = "1pt",
+          digits =2)
+```
+
+```{r}
+vif(life)
+vif(life_t5)
+plot(life)
+plot(life_t5)
+```
+```{r}
+plot(df_lm$`Poverty Rate` ~ df_lm$Inflation,
+     xlab = "Inflation",
+     ylab = "Poverty Rate",
+     type = "p",
+     pch = 21)
+
+plot(df_lm$`Poverty Rate` ~ df_lm$`Population Growth`, xlab = "Population Growth", ylab = "Poverty Rate", type = "p", pch = 21)
+plot(df_lm$`Poverty Rate` ~ df_lm$`Death Rate`, xlab = "Death Rate", ylab = "Poverty Rate", type = "p", pch = 21)
+plot(df_lm$`Poverty Rate` ~ df_lm$Unempolyment, xlab = "Unemployment", ylab = "Poverty Rate", type = "p", pch = 21)
+plot(df_lm$`Poverty Rate` ~ df_lm$Edcuation, xlab = "Education", ylab = "Poverty Rate", type = "p", pch = 21)
+plot(df_lm$`Poverty Rate` ~ df_lm$GDP, xlab = "GDP", ylab = "Poverty Rate", type = "p", pch = 21)
+
+```
+
