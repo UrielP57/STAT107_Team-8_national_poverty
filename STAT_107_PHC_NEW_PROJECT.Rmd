@@ -1,6 +1,6 @@
 ---
-title: 'STAT 107 Project:PHC'
-author: "Marianne, Donovan Lin, Uriel"
+title: 'Do different Variables influence the Poverty Rate of the World?'
+author: "Uriel S. Pacheco-Guerrero, Donnie, Marianne"
 date: '2025-10-14'
 output:
   pdf_document: default
@@ -8,15 +8,15 @@ output:
 ---
 ### Introduction
 # Purpose:
-The purpose of this experiment is to figure out if the chosen independent variables not only prove that they influence the Poverty Headcount ratio, but to potentially figure out if building a linear regression (either with transformation or alternative one) can help predict the next decade's world wide poverty rate. The result of this research can help organizations as United Nations to Their policies they move will affect businesses on all levels and those on a consumer level. 
+The purpose of this experiment is to figure out if the choose independent variables not only prove that to influence the Poverty Headcount ratio. But to potentially figure out if by building a linear regression (either with transformation or alternative one) can help fores the next decades world wide poverty rate. The result of this research can help organization as United Nations to create a movement to either compile member nations to invest more of their GDP into education and improving their individual economies. And whatever policies they move will affect businesses on all levels and those on a consumer level. 
 
 # Question
--Main Question: Are the chosen variables Education% per GDP, Unemployment, Population growth, Inflation able to influence the Poverty rate of the world?
+-Main Question: Is the choose variables of average of; Education% per GDP, Unemployment, Population growth, Inflation able to influence the Poverty rate of the world?
 
--Sub-Question: Is it possible to forecast the Poverty headcount ratio for the foreseeable future?
+-Sub-Question: Is it possible to forecast the Poverty headcount ratio for the foreseeable future. 
  
 # Benefit:
-This analysis should be able to benefit government institutions that track and influence how the amount of inflation inflicted upon society as a whole. Additionally, knowing whether or not a country can reduce their nation's Poverty rate is deemed the most influencing variable. The same applies for population growth, however that is less controllable due to moral reasons. 
+This analysis should be to benefit government institutions that not only track but try to influence how much inflation would inflict upon society as a whole. Additionally knowing whether not a country like United Kingdom can reduce their nation's Poverty rate if unemployment is deemed the most influencing variable. The same applies for population growth however that is less controllable while being confined to moral reasons. 
 
 # Plan:
 We hope to answer our question since, if it is determined that the independent variables have a significant ability to influence the Poverty head count ratio. Then going forward it would be possible to train a model that could potential forecast which would help government bodies worldwide create plans to counteract these shifts.
@@ -26,7 +26,7 @@ knitr::opts_chunk$set(echo = TRUE)
 ```
 
 ## Data 
-There are currently five different data sets, all of which are from World Bank Group database. The dependent variable is currently referencing to Poverty Headcount ratio or Poverty rate for short ($3.00 a day), ND. The independent variables are about annual Population growth by percent (Pop_Growth), Inflation consumer price (API), Education Statistic (Education), Unemployment rate based of countries total. There was additional information provided with Poverty rate, inflation and Population growth however it was not important enough to add. 
+There are currently five different data sets, all of which are from World Bank Group database. The dependent variable is currently referencing to Poverty Headcount ratio or Poverty rate for short($3.00 a day) being names as ND. The independent variables are about annual Population growth by percent (Pop_Growth), Inflation consumer price (API), Education Statistic (KSI), Unemployment rate based of countries total (KSI, because I was going insane). There was additional information provided with Poverty rate, inflation and Population growth however it was not important enough to add. 
 ## Data sets:
 ```{r}
 library(stargazer)
@@ -46,7 +46,7 @@ hot_5 <- Education[-2:-4]
 ```
 
 ## Cleaning the Data:
-For all the data sets being presented here, all were downloaded in a wide form for an excel spread sheet. Any other method did not work, which is why for the idea to work I needed to have it in long form. So after stripping each row, I would divide each row into groups of 270 of 65 indexes long. Then i would be able to create a new data frame for each csv file so it be easier to ru further code and not look like an eyesore otherwise. The associated varible names were df_ND,df_API,df_PG,df_Unemp,df_ed. Each annual variable is computed with the unweighted average across 270 countries. This will treat all countries equally regardless of population size,nwhich will result in some bias but will simplify the analysis.
+For all the data sets being presented here, all were downloaded in a wide form for an excel spread sheet. Any other method did not work, which is why for the idea to work I needed to have it in long form. So after stripping each row, I would divide each row into groups of 270 of 65 indexes long. Then i would be able to create a new data frame for each csv file so it be easier to ru further code and not look like an eyesore otherwise. The associated varible names were df_ND,df_API,df_PG,df_Unemp,df_ed.
 
 # Code for ND
 
@@ -110,8 +110,8 @@ years <- c(1960:2024)
 rownames(df_ND) <- c(years)
 
 df_ND$idea <- ifelse(df_ND$Aruba >= 0, 0)
-for (j in colnames(df_ND)){
-  df_ND$idea <- as.numeric(df_ND$idea) + as.numeric(df_ND[[j]])
+for (idk in colnames(df_ND)){
+  df_ND$idea <- as.numeric(df_ND$idea) + as.numeric(df_ND[[idk]])
   df_ND$Poverty_rate <- ifelse(df_ND$Aruba >= 0, df_ND$idea/ 270)
 }
 ```
@@ -126,8 +126,8 @@ df_API <- data.frame(col_nm = fin_API[5:270])
 colnames(df_API) <- c(col_nm_2)
 rownames(df_API) <- c(years)
 df_API$idea <- ifelse(df_API$Aruba >= -1, 0,0)
-for (k in colnames(df_API)){
-  df_API$idea <- as.numeric(df_API$idea) + as.numeric(df_API[[k]])
+for (idk_2 in colnames(df_API)){
+  df_API$idea <- as.numeric(df_API$idea) + as.numeric(df_API[[idk_2]])
   df_ND$`Inflation` <- ifelse(df_API$Aruba >= -1, df_API$idea/ 270, 0)
 }
 ```
@@ -142,8 +142,8 @@ df_PG <- data.frame(col_nm = fin_PG[5:270])
 colnames(df_PG) <- c(col_nm_3)
 rownames(df_PG) <- c(years)
 df_PG$idea <- ifelse(df_PG$Aruba >= -1, 0,0)
-for (l in colnames(df_API)){
-  df_PG$idea <- as.numeric(df_PG$idea) + as.numeric(df_PG[[l]])
+for (idk_3 in colnames(df_API)){
+  df_PG$idea <- as.numeric(df_PG$idea) + as.numeric(df_PG[[idk_3]])
   df_ND$`Population` <- ifelse(df_PG$Aruba >= -10000,0, df_PG$idea/ 270)
 }
 ```
@@ -159,8 +159,8 @@ colnames(df_unemployment) <- c(col_nm_4)
 rownames(df_unemployment) <- c(years)
 
 df_unemployment$idea <- ifelse(df_unemployment$Aruba >= -1, 0,0)
-for (m in colnames(df_unemployment)){
-  df_unemployment$idea <- as.numeric(df_unemployment$idea) + as.numeric(df_unemployment[[m]])
+for (idk_4 in colnames(df_unemployment)){
+  df_unemployment$idea <- as.numeric(df_unemployment$idea) + as.numeric(df_unemployment[[idk_4]])
   df_ND$`Unemployment` <- ifelse(df_unemployment$Aruba >= -10000,df_unemployment$idea/ 270,0)
 }
 ```
@@ -175,8 +175,8 @@ df_ed <- data.frame(col_nm_ed = fin_ed[5:270])
 colnames(df_ed) <- c(col_nm_ed)
 rownames(df_ed) <- c(years)
 df_ed$Education <- ifelse(df_ed$Aruba >= -1, 0,0)
-for (n in colnames(df_ed)){
-  df_ed$Education <- as.numeric(df_ed$Education) + as.numeric(df_ed[[n]])
+for (idk_ed in colnames(df_ed)){
+  df_ed$Education <- as.numeric(df_ed$Education) + as.numeric(df_ed[[idk_ed]])
   df_ND$`Education % from GDP` <- ifelse(df_ed$Aruba >= -10000,df_ed$Education/ 270)
 }
 df_ND$Time <- ifelse(df_ed$Aruba >= -10000, c(1960:2024))
@@ -212,19 +212,19 @@ cor(df_ND_w_n_out$`Poverty_rate`,df_ND_w_n_out$Time)
 
 
 Dependent Variable is Poverty rate of the World:
-A 1% increase for Inflation is associated with an estimated 8% increase in Poverty Rate by the end of the year.
+For every 1 increase in percentage for Inflation, it is expected that the Poverty rate will increase by 0.07% points at years end.
 
-A 1% increase for Population Growth is associated with an estimated 8% increase in Poverty Rate by the end of the year.
+For every additional rise in percentage for Population growth,it is expected that the Poverty rate will decrease by -0.09% points at years end.
 
-A 1% increase for Unemployment is associated with an estimated 8% increase in Poverty Rate by the end of the year.
+For every rise in percentage for Unemployment, it is expected that the Poverty rate will increase by .48% points.
 
-A 1% increase for Education is associated with an estimated 8% increase in Poverty Rate by the end of the year.
+For every rise in Education in percent, it is expected that the Poverty rate will decrease by -.10% points.
 
 The only independent variables that would of have passed the p-level of 0.05 is Inflation and Unemployment. However only Unemployment passes a p-level of 0.01.
 
 ## Visualization:
-VIF = measures if multi colinearity: to see if the variables are truly independent of each other. 
-Honestly, the result for the variables are quite high however they are still lower than 5. So they are somewhat influencing each other, though not to the level that it would bring sway to the results. 
+VIF = measures if multicolineairty: to see if the variables are truly independent of each other. 
+Honestly, the result for the variables are quite high however they are still lower than 5. So they are somewhat influecning each other, though not to the level that it would bring sway to the results. 
 
 IMPORTANT: if I add time as a variable, causes r^2 to rise slightly but when if comes to looking for truely independence. Time influnces Unemployment and Education, since it being 7.326.
 
