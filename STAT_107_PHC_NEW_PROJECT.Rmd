@@ -1,6 +1,6 @@
 ---
 title: 'STAT 107 Project:PHC'
-author: "Marianne, Donnie, Uriel"
+author: "Marianne, Donovan Lin, Uriel"
 date: '2025-10-14'
 output:
   pdf_document: default
@@ -8,15 +8,15 @@ output:
 ---
 ### Introduction
 # Purpose:
-The purpose of this experiment is to figure out if the choose independent variables not only prove that to influence the Poverty Headcount ratio. But to potentially figure out if by building a linear regression (either with transformation or alternative one) can help fores the next decades world wide poverty rate. The result of this research can help organization as United Nations to create a movement to either compile member nations to invest more of their GDP into education and improving their individual economies. And whatever policies they move will affect businesses on all levels and those on a consumer level. 
+The purpose of this experiment is to figure out if the chosen independent variables not only prove that they influence the Poverty Headcount ratio, but to potentially figure out if building a linear regression (either with transformation or alternative one) can help predict the next decade's world wide poverty rate. The result of this research can help organizations as United Nations to Their policies they move will affect businesses on all levels and those on a consumer level. 
 
 # Question
--Main Question: Is the choose variables of average of; Education% per GDP, Unemployment, Population growth, Inflation able to influence the Poverty rate of the world?
+-Main Question: Are the chosen variables Education% per GDP, Unemployment, Population growth, Inflation able to influence the Poverty rate of the world?
 
--Sub-Question: Is it possible to forecast the Poverty headcount ratio for the foreseeable future. 
+-Sub-Question: Is it possible to forecast the Poverty headcount ratio for the foreseeable future?
  
 # Benefit:
-This analysis should be to benefit government institutions that not only track but try to influence how much inflation would inflict upon society as a whole. Additionally knowing whether not a country like United Kingdom can reduce their nation's Poverty rate if unemployment is deemed the most influencing variable. The same applies for population growth however that is less controllable while being confined to moral reasons. 
+This analysis should be able to benefit government institutions that track and influence how the amount of inflation inflicted upon society as a whole. Additionally, knowing whether or not a country can reduce their nation's Poverty rate is deemed the most influencing variable. The same applies for population growth, however that is less controllable due to moral reasons. 
 
 # Plan:
 We hope to answer our question since, if it is determined that the independent variables have a significant ability to influence the Poverty head count ratio. Then going forward it would be possible to train a model that could potential forecast which would help government bodies worldwide create plans to counteract these shifts.
@@ -26,7 +26,7 @@ knitr::opts_chunk$set(echo = TRUE)
 ```
 
 ## Data 
-There are currently five different data sets, all of which are from World Bank Group database. The dependent variable is currently referencing to Poverty Headcount ratio or Poverty rate for short($3.00 a day) being names as ND. The independent variables are about annual Population growth by percent (Pop_Growth), Inflation consumer price (API), Education Statistic (KSI), Unemployment rate based of countries total (KSI, because I was going insane). There was additional information provided with Poverty rate, inflation and Population growth however it was not important enough to add. 
+There are currently five different data sets, all of which are from World Bank Group database. The dependent variable is currently referencing to Poverty Headcount ratio or Poverty rate for short ($3.00 a day), ND. The independent variables are about annual Population growth by percent (Pop_Growth), Inflation consumer price (API), Education Statistic (Education), Unemployment rate based of countries total. There was additional information provided with Poverty rate, inflation and Population growth however it was not important enough to add. 
 ## Data sets:
 ```{r}
 library(stargazer)
@@ -40,7 +40,7 @@ Education <- read.csv("Education.csv")
 ```
 
 ## Cleaning the Data:
-For all the data sets being presented here, all were downloaded in a wide form for an excel spread sheet. Any other method did not work, which is why for the idea to work I needed to have it in long form. So after stripping each row, I would divide each row into groups of 270 of 65 indexes long. Then i would be able to create a new data frame for each csv file so it be easier to ru further code and not look like an eyesore otherwise. The associated varible names were df_ND,df_API,df_PG,df_Unemp,df_ed.
+For all the data sets being presented here, all were downloaded in a wide form for an excel spread sheet. Any other method did not work, which is why for the idea to work I needed to have it in long form. So after stripping each row, I would divide each row into groups of 270 of 65 indexes long. Then i would be able to create a new data frame for each csv file so it be easier to ru further code and not look like an eyesore otherwise. The associated varible names were df_ND,df_API,df_PG,df_Unemp,df_ed. Each annual variable is computed with the unweighted average across 270 countries. This will treat all countries equally regardless of population size,nwhich will result in some bias but will simplify the analysis.
 
 # Code for ND
 
@@ -84,8 +84,8 @@ colnames(df_ND) <- c(col_nm_all)
 years <- c(1960:2024) 
 rownames(df_ND) <- c(years)
 df_ND$idea <- ifelse(df_ND$Aruba >= 0, 0)
-for (idk in colnames(df_ND)){
-  df_ND$idea <- as.numeric(df_ND$idea) + as.numeric(df_ND[[idk]])
+for (j in colnames(df_ND)){
+  df_ND$idea <- as.numeric(df_ND$idea) + as.numeric(df_ND[[j]])
   df_ND$Poverty_rate <- ifelse(df_ND$Aruba >= 0, df_ND$idea/ 270)
 }
 ```
@@ -100,8 +100,8 @@ df_API <- data.frame(col_nm = fin_API[5:270])
 colnames(df_API) <- c(col_nm_2)
 rownames(df_API) <- c(years)
 df_API$idea <- ifelse(df_API$Aruba >= -1, 0,0)
-for (idk_2 in colnames(df_API)){
-  df_API$idea <- as.numeric(df_API$idea) + as.numeric(df_API[[idk_2]])
+for (k in colnames(df_API)){
+  df_API$idea <- as.numeric(df_API$idea) + as.numeric(df_API[[k]])
   df_ND$`Inflation` <- ifelse(df_API$Aruba >= -1, df_API$idea/ 270, 0)
 }
 ```
@@ -116,8 +116,8 @@ df_PG <- data.frame(col_nm = fin_PG[5:270])
 colnames(df_PG) <- c(col_nm_3)
 rownames(df_PG) <- c(years)
 df_PG$idea <- ifelse(df_PG$Aruba >= -1, 0,0)
-for (idk_3 in colnames(df_API)){
-  df_PG$idea <- as.numeric(df_PG$idea) + as.numeric(df_PG[[idk_3]])
+for (l in colnames(df_API)){
+  df_PG$idea <- as.numeric(df_PG$idea) + as.numeric(df_PG[[l]])
   df_ND$`Population` <- ifelse(df_PG$Aruba >= -10000,0, df_PG$idea/ 270)
 }
 ```
@@ -133,8 +133,8 @@ colnames(df_unemployment) <- c(col_nm_4)
 rownames(df_unemployment) <- c(years)
 
 df_unemployment$idea <- ifelse(df_unemployment$Aruba >= -1, 0,0)
-for (idk_4 in colnames(df_unemployment)){
-  df_unemployment$idea <- as.numeric(df_unemployment$idea) + as.numeric(df_unemployment[[idk_4]])
+for (m in colnames(df_unemployment)){
+  df_unemployment$idea <- as.numeric(df_unemployment$idea) + as.numeric(df_unemployment[[m]])
   df_ND$`Unemployment` <- ifelse(df_unemployment$Aruba >= -10000,df_unemployment$idea/ 270,0)
 }
 ```
@@ -149,8 +149,8 @@ df_ed <- data.frame(col_nm_ed = fin_ed[5:270])
 colnames(df_ed) <- c(col_nm_ed)
 rownames(df_ed) <- c(years)
 df_ed$Education <- ifelse(df_ed$Aruba >= -1, 0,0)
-for (idk_ed in colnames(df_ed)){
-  df_ed$Education <- as.numeric(df_ed$Education) + as.numeric(df_ed[[idk_ed]])
+for (n in colnames(df_ed)){
+  df_ed$Education <- as.numeric(df_ed$Education) + as.numeric(df_ed[[n]])
   df_ND$`Education % from GDP` <- ifelse(df_ed$Aruba >= -10000,df_ed$Education/ 270)
 }
 ```
@@ -162,7 +162,7 @@ df_ND$Time <- ifelse(df_ed$Aruba >= -10000, c(1960:2024))
 life <- lm(Poverty_rate ~ Inflation + Population + Unemployment + `Education % from GDP` + Time, data = df_ND)
 life_m7 <- lm(Poverty_rate ~ Inflation + Population + Unemployment + `Education % from GDP` + poly(Time, 3), data = df_ND)
 stargazer(life, life_m7,
-          title="Poverty rate lm",
+          title="Determinants of Poverty Rates: Linear and Polynomial Time Models",
           header=F,
           font.size = "tiny",
           type = "text",
@@ -172,26 +172,41 @@ stargazer(life, life_m7,
           digits =2)
 ```
 Dependent Variable is Poverty rate of the World:
-For every 1 increase in percentage for Inflation, it is expected that the Poverty rate will increase by 0.07% points at years end.
+A 1% increase for Inflation is associated with an estimated 8% increase in Poverty Rate by the end of the year.
 
-For every additional rise in percentage for Population growth,it is expected that the Poverty rate will decrease by -0.09% points at years end.
+A 1% increase for Population Growth is associated with an estimated 8% increase in Poverty Rate by the end of the year.
 
-For every rise in percentage for Unemployment, it is expected that the Poverty rate will increase by .48% points.
+A 1% increase for Unemployment is associated with an estimated 8% increase in Poverty Rate by the end of the year.
 
-For every rise in Education in percent, it is expected that the Poverty rate will decrease by -.10% points.
+A 1% increase for Education is associated with an estimated 8% increase in Poverty Rate by the end of the year.
 
 The only independent variables that would of have passed the p-level of 0.05 is Inflation and Unemployment. However only Unemployment passes a p-level of 0.01.
 
 ## Visualization:
-VIF = measures if multicolineairty: to see if the variables are truly independent of each other. 
-Honestly, the result for the variables are quite high however they are still lower than 5. So they are somewhat influecning each other, though not to the level that it would bring sway to the results. 
+VIF = measures if multi colinearity: to see if the variables are truly independent of each other. 
+Honestly, the result for the variables are quite high however they are still lower than 5. So they are somewhat influencing each other, though not to the level that it would bring sway to the results. 
 
-IMPORTANT: if I add time as a variable, causes r^2 to rise slightly but when if comes to looking for truely independence. Time influnces Unemployment and Education, since it being 7.326.
+IMPORTANT: if I add time as a variable, causes r^2 to rise slightly but when if comes to looking for true independence, Time influences Unemployment and Education, since it being 7.326.
 ```{r}
 library(car)
 require(graphics)
-plot(life_m7)
-plot(life)
+resid_plot <- function(model, title="Residuals vs Fitted") {
+  fv <- fitted(model)
+  res <- resid(model)
+  
+  plot(fv, res,
+       pch = 19, cex = 1.2,
+       xlab = "Fitted Values",
+       ylab = "Residuals",
+       main = title)
+  
+  abline(h = 0, col = "gray60", lwd = 2)
+  lines(lowess(fv, res), col = "red", lwd = 2)
+}
+
+resid_plot(life, "Residuals vs Fitted (Linear Model)")
+resid_plot(life_m7, "Residuals vs Fitted (Cubic Time Model)")
+
 
 
 ```
@@ -200,7 +215,7 @@ Analysis:
 If we run a null test at a p-level of .05, this would of been our results. 
 
 After running the glm function, only two of the five independent variables ended up being able to pass a p-level of 0.05 and below. They were Unemployment and Time; where unemployment is sitting conformable at 4.780527e-03 and Time's main variable is at 5.352967e-04. However I would want to clarify that Time was transformed using poly(x, n). which allowed it to gain ***. However for Unemployment it still would've passed but it would of been a much lower number.
-Outlines: There were three notable points that  kept on appearing when ploting the glm():2002, 1997 and 2021. These outlines are quite fantasizing since 2021 is during the year of which Covid-19 was the most rampant. While in 2002, the war on terror speech from president bush occurred (????idk). Lastly in 1997, there was a market crises in many Asian countries, where unemployment, wage declines and many currencies fell against the US dollar.
+Outlines: The two models show a decent R^2 value at 64%, however, the graphs do not represent that as they show spread out data. This is due to many outliers in the graph which correspond to certain major events, such as COVID in 2020. Thus, the simple linear model isn't a good fit for our dataset. The cubic time model, however, shows a better fit, as the R^2 value is strong at 89%, and that is demonstrated in the data, even though there are still multiple outliers. This overall is a better fit for our dataset. 
 
 
 ```{r}
