@@ -22,5 +22,13 @@ So to clean the data, it was necessary to convert each data set into long form b
 
 Then we converted the data frame by setting into a long form by using pivot_longer() of the tidyverse package. We would associate each data frame with its own long form, such as df_pv for Poverty rate or df_INf for Inflation rate, and so on. As to not to cause unintentional skewness, many entries have NA as their entry, not because they were deleted or removed, but because the given data set did not have an entry for them. 
 
+## Code
+We had 8 key steps in our code. First, we loaded the 7 datasets (poverty, inflation, population growth, etc.). We cleaned each dataset and made the data more usable and efficient. We merged all the datasets into a combined country and year dataset. We used two regression models, the standard linear model as well as a transformed model (sqrt(poverty rate) and log(GDP)). We displayed all the regression line results with the help of stargazer and also checked multicollinearity with the Variance Inflation Factor. We used those plots to analyze the resulting data and evaluate the models, and lastly, we made scatterplots to help visualize the relationship between poverty rate and all of the predictors.
 
+## Files
+There are multiple RMD files with multiple uses in this project. Our main RMD is Pr of the World.Rmd, which is the file with all the code, as well as the introductions, purpose, data, etc. We also have 11_DataCleaning.Rmd, 12_DataProcessing.Rmd, 13_DataVisualization.Rmd, which are the RMD files that show the data cleaning, data processing, and analysis, respectively. We also have 00_requirements.R, which shows all the libraries that were used in this project. 
+
+## Analysis
+
+## Conclusion
 

@@ -46,7 +46,6 @@ df_lm <- merge(df_lm, df_GDP)
 
 ```{r}
 midway_df <- read_csv("11_dataclean.csv")
-
-write.csv(midway_df, "12_DataProcessing.csv", row.names = FALSE)
+write.csv(df_lm, file = "12_dataprocessed.csv", row.names = TRUE)
 ```
 

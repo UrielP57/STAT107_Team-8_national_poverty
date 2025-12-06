@@ -39,3 +39,4 @@ plot(df_lm$`Poverty Rate` ~ df_lm$Edcuation, xlab = "Education", ylab = "Poverty
 plot(df_lm$`Poverty Rate` ~ df_lm$GDP, xlab = "GDP", ylab = "Poverty Rate", type = "p", pch = 21)
 
 ```
+
