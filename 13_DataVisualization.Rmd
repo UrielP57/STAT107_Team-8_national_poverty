@@ -3,3 +3,39 @@ title: "13_DataVisualization"
 output: html_document
 ---
 
+```{r}
+library(car)
+life <- lm(`Poverty Rate` ~ Inflation + `Population Growth` + Unempolyment + Edcuation + GDP + `Death Rate`, data = df_lm)
+life_t5 <- lm(sqrt(`Poverty Rate`) ~ Inflation + `Population Growth` + Unempolyment + Edcuation + log(GDP) + `Death Rate`, data = df_lm)
+stargazer(life, life_t5,
+          title="Poverty rate lm",
+          header=F,
+          font.size = "tiny",
+          type = "text",
+          algin = T,
+          single = F,
+          column.sep.width = "1pt",
+          digits =2)
+```
+
+```{r}
+vif(life)
+vif(life_t5)
+plot(life)
+plot(life_t5)
+```
+
+```{r}
+plot(df_lm$`Poverty Rate` ~ df_lm$Inflation,
+     xlab = "Inflation",
+     ylab = "Poverty Rate",
+     type = "p",
+     pch = 21)
+
+plot(df_lm$`Poverty Rate` ~ df_lm$`Population Growth`, xlab = "Population Growth", ylab = "Poverty Rate", type = "p", pch = 21)
+plot(df_lm$`Poverty Rate` ~ df_lm$`Death Rate`, xlab = "Death Rate", ylab = "Poverty Rate", type = "p", pch = 21)
+plot(df_lm$`Poverty Rate` ~ df_lm$Unempolyment, xlab = "Unemployment", ylab = "Poverty Rate", type = "p", pch = 21)
+plot(df_lm$`Poverty Rate` ~ df_lm$Edcuation, xlab = "Education", ylab = "Poverty Rate", type = "p", pch = 21)
+plot(df_lm$`Poverty Rate` ~ df_lm$GDP, xlab = "GDP", ylab = "Poverty Rate", type = "p", pch = 21)
+
+```

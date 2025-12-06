@@ -3,3 +3,50 @@ title: "12_DataProcessing"
 output: html_document
 ---
 
+```{r}
+library(stargazer)
+library(car)
+require(graphics)
+library(tidyverse)
+ND <- read.csv("New_DDAY.csv", skip = 4)
+hot <- ND[-2:-4]
+API <- read.csv("API_A.csv", skip = 4)
+hot_2 <- API[-2:-4]
+PG <- read.csv("Pop_Growth.csv", skip = 4)
+hot_7 <- PG[-2:-4]
+DR <- read.csv("Death rate.csv", skip = 4)
+hot_3 <- DR[-2:-4]
+unemployment <- read.csv("Unemployment.csv", skip = 4)
+hot_4 <- unemployment[-2:-4]
+Education <- read.csv("Education.csv", skip =4)
+hot_5 <- Education[-2:-4]
+GDP <- read.csv("API_NY.GDP.PCAP.CD_DS2_en_csv_v2_2518.csv", skip =4)
+hot_6 <- GDP[-2:-4]
+```
+
+
+```{r}
+df_pr <- pivot_longer(hot, cols = X1960:X2024, names_to = "Years", names_prefix = "X", values_to = "Poverty Rate")
+df_INf <- pivot_longer(hot_2, cols = X1960:X2024, names_to = "Years", names_prefix = "X", values_to = "Inflation")
+df_PG <- pivot_longer(hot_7, cols = X1960:X2024, names_to = "Years", names_prefix = "X", values_to = "Population Growth")
+df_DR <- pivot_longer(hot_3, cols = X1960:X2024, names_to = "Years", names_prefix = "X", values_to = "Death Rate")
+df_Unempo <- pivot_longer(hot_4, cols = X1960:X2024, names_to = "Years", names_prefix = "X", values_to = "Unempolyment")
+df_ED <- pivot_longer(hot_5, cols = X1960:X2024, names_to = "Years", names_prefix = "X", values_to = "Edcuation")
+df_GDP <- pivot_longer(hot_6, cols = X1960:X2024, names_to = "Years", names_prefix = "X", values_to = "GDP")
+```
+
+```{r}
+df_lm <- merge(df_pr,df_INf)
+df_lm <- merge(df_lm, df_PG)
+df_lm <-merge(df_lm, df_DR)
+df_lm <- merge(df_lm, df_Unempo)
+df_lm <- merge(df_lm, df_ED)
+df_lm <- merge(df_lm, df_GDP)
+```
+
+```{r}
+midway_df <- read_csv("11_dataclean.csv")
+
+write.csv(midway_df, "12_DataProcessing.csv", row.names = FALSE)
+```
+
